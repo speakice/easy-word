@@ -55,6 +55,8 @@ public final class WordLibrary {
     private static final List<LibWord> LIST = new ArrayList<>();
     private static final Map<String, LibWord> BY_CHAR = new HashMap<>();
     private static final List<Passage> PASSAGES = new ArrayList<>();
+    /** 汉字 → 拼音（给用户自己添加的字用）。 */
+    private static final Map<String, String> PINYIN = new HashMap<>();
     private static boolean loaded;
 
     private WordLibrary() {
@@ -90,6 +92,14 @@ public final class WordLibrary {
                 JSONObject o = ps.getJSONObject(i);
                 PASSAGES.add(new Passage(o.optString("title", ""), o.optString("text", "")));
             }
+
+            PINYIN.clear();
+            for (String line : readLines(context, "library/pinyin.txt")) {
+                int tab = line.indexOf('\t');
+                if (tab > 0) {
+                    PINYIN.put(line.substring(0, tab).trim(), line.substring(tab + 1).trim());
+                }
+            }
         } catch (Exception ignore) {
             // 资源缺失时保持空库，不阻塞启动
         }
@@ -107,6 +117,20 @@ public final class WordLibrary {
             }
         }
         return sb.toString();
+    }
+
+    /** 按行读取（read() 会把换行丢掉，逐行解析的不能用它）。 */
+    private static java.util.List<String> readLines(Context context, String path) throws Exception {
+        java.util.List<String> lines = new ArrayList<>();
+        InputStream in = context.getAssets().open(path);
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(in, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        }
+        return lines;
     }
 
     /** 全部字（950），按学习顺序（批次内为生成顺序）。 */
@@ -157,5 +181,12 @@ public final class WordLibrary {
             sb.append(w.words.get(i));
         }
         return sb.toString();
+    }
+
+    /** 某个字的拼音（查不到返回空串）。 */
+    public static String pinyin(Context context, String ch) {
+        ensureLoaded(context);
+        String py = PINYIN.get(ch);
+        return py == null ? "" : py;
     }
 }

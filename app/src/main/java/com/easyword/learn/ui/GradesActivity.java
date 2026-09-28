@@ -46,7 +46,7 @@ public class GradesActivity extends AppCompatActivity {
     private void render(WordViewModel.Stats stats) {
         binding.gradeBox.removeAllViews();
         for (int batch = 1; batch <= 10; batch++) {
-            int total = (batch == 10) ? 50 : 100;
+            int total = stats.totalOfBatch(batch);
             ItemGradeRowBinding row = ItemGradeRowBinding.inflate(
                     getLayoutInflater(), binding.gradeBox, false);
             String name = TestCatalog.batchName(batch);

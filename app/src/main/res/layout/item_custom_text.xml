@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 一条自定义资料：名称 + 内容 + 删除 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/bg_card"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <EditText
+        android:id="@+id/editLabel"
+        android:layout_width="96dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_semi_black"
+        android:hint="名称"
+        android:inputType="text"
+        android:maxLength="8"
+        android:padding="10dp"
+        android:textColor="@color/yellow"
+        android:textColorHint="#808080"
+        android:textSize="15sp" />
+
+    <EditText
+        android:id="@+id/editValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_semi_black"
+        android:hint="内容"
+        android:inputType="text"
+        android:maxLength="30"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textColorHint="#808080"
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/btnRemove"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="6dp"
+        android:background="@drawable/bg_round_button"
+        android:contentDescription="@string/settings_custom_remove"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="7dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_broom" />
+</LinearLayout>

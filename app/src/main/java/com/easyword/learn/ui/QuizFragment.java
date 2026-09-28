@@ -48,7 +48,7 @@ public class QuizFragment extends Fragment {
 
         viewModel.getStats().observe(getViewLifecycleOwner(), stats -> {
             if (stats != null) {
-                adapter.setData(TestCatalog.ALL, stats.batchPercent);
+                adapter.setData(TestCatalog.ALL, stats.batchPercent, stats.batchTotal);
             }
         });
         viewModel.init();

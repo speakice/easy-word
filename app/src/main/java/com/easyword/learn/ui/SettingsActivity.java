@@ -7,20 +7,33 @@ import android.graphics.BitmapFactory;
 import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewOutlineProvider;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.easyword.learn.R;
 import com.easyword.learn.databinding.ActivitySettingsBinding;
+import com.easyword.learn.databinding.ItemCustomTextBinding;
+import com.easyword.learn.data.TestCatalog;
+import com.easyword.learn.utils.CustomText;
 import com.easyword.learn.utils.Settings;
+import com.easyword.learn.viewmodel.WordViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 设置：换头像、改昵称，以及调考试门槛（解锁进度 / 及格 / 良好 / 优秀）。
@@ -32,6 +45,9 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String AVATAR_FILE = "avatar.png";
 
     private ActivitySettingsBinding binding;
+    private WordViewModel viewModel;
+    private final List<CustomText.Entry> customEntries = new ArrayList<>();
+    private int currentBatch = 1;
 
     public static Intent intent(Context context) {
         return new Intent(context, SettingsActivity.class);
@@ -59,6 +75,15 @@ public class SettingsActivity extends AppCompatActivity {
 
         loadCurrent();
         binding.btnSaveSettings.setOnClickListener(v -> save());
+
+        viewModel = new ViewModelProvider(this).get(WordViewModel.class);
+        viewModel.init();
+        viewModel.getStats().observe(this, stats -> {
+            if (stats != null) {
+                currentBatch = stats.currentBatch;
+            }
+        });
+        setupCustomText();
     }
 
     private void loadCurrent() {
@@ -145,7 +170,147 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    // ---------- 常用写字：把姓名、籍贯里的新字加进字库 ----------
+
+    private void setupCustomText() {
+        customEntries.clear();
+        customEntries.addAll(CustomText.entries(this));
+        if (customEntries.isEmpty()) {
+            for (int i = 0; i < 2 && i < CustomText.PRESETS.length; i++) {
+                customEntries.add(new CustomText.Entry(CustomText.PRESETS[i], ""));
+            }
+        }
+
+        binding.presetBox.removeAllViews();
+        for (String preset : CustomText.PRESETS) {
+            TextView chip = new TextView(this);
+            chip.setText(preset);
+            chip.setTextSize(14f);
+            chip.setGravity(Gravity.CENTER);
+            int padH = dp(14), padV = dp(7);
+            chip.setPadding(padH, padV, padH, padV);
+            chip.setBackgroundResource(R.drawable.bg_chip);
+            chip.setTextColor(0xFFCCCCCC);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.rightMargin = dp(8);
+            chip.setLayoutParams(lp);
+            chip.setOnClickListener(v -> {
+                customEntries.add(new CustomText.Entry(preset, ""));
+                renderCustomRows();
+            });
+            binding.presetBox.addView(chip);
+        }
+
+        binding.btnAddCustom.setOnClickListener(v -> {
+            customEntries.add(new CustomText.Entry("", ""));
+            renderCustomRows();
+        });
+        binding.btnMergeCustom.setOnClickListener(v -> mergeCustomText());
+        renderCustomRows();
+    }
+
+    private void renderCustomRows() {
+        binding.customBox.removeAllViews();
+        for (int i = 0; i < customEntries.size(); i++) {
+            final int index = i;
+            ItemCustomTextBinding row = ItemCustomTextBinding.inflate(
+                    LayoutInflater.from(this), binding.customBox, false);
+            CustomText.Entry entry = customEntries.get(i);
+            row.editLabel.setText(entry.label);
+            row.editValue.setText(entry.value);
+            row.btnRemove.setOnClickListener(v -> {
+                collectCustomRows();
+                if (index < customEntries.size()) {
+                    customEntries.remove(index);
+                }
+                renderCustomRows();
+            });
+            binding.customBox.addView(row.getRoot());
+        }
+    }
+
+    /** 把界面上的输入收回列表。 */
+    private void collectCustomRows() {
+        for (int i = 0; i < binding.customBox.getChildCount() && i < customEntries.size(); i++) {
+            View row = binding.customBox.getChildAt(i);
+            EditText label = row.findViewById(R.id.editLabel);
+            EditText value = row.findViewById(R.id.editValue);
+            customEntries.get(i).label = label.getText().toString().trim();
+            customEntries.get(i).value = value.getText().toString().trim();
+        }
+    }
+
+    /** 分析资料里的字，问清楚加到哪一批，然后插入字库。 */
+    private void mergeCustomText() {
+        collectCustomRows();
+        CustomText.save(this, customEntries);
+        String text = CustomText.allText(this);
+        if (text.trim().isEmpty()) {
+            Toast.makeText(this, R.string.settings_custom_empty, Toast.LENGTH_LONG).show();
+            return;
+        }
+        viewModel.analyzeCustomText(text, analysis -> {
+            if (analysis.fresh.isEmpty()) {
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.settings_custom)
+                        .setMessage(getString(R.string.settings_custom_all_known,
+                                join(analysis.known)))
+                        .setPositiveButton("知道了", null)
+                        .show();
+                return;
+            }
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.settings_custom)
+                    .setMessage(getString(R.string.settings_custom_analysis,
+                            analysis.known.size() + analysis.fresh.size(),
+                            analysis.known.size(), analysis.fresh.size(),
+                            join(analysis.fresh)))
+                    .setNegativeButton("取消", null)
+                    .setPositiveButton(R.string.settings_custom_pick_batch,
+                            (d, w) -> pickBatch(analysis.fresh))
+                    .show();
+        });
+    }
+
+    /** 选批次（默认当前正在学的那批）。 */
+    private void pickBatch(List<String> fresh) {
+        String[] names = new String[10];
+        int checked = Math.max(0, Math.min(9, currentBatch - 1));
+        for (int i = 0; i < 10; i++) {
+            names[i] = TestCatalog.batchName(i + 1) + "（第 " + (i + 1) + " 批）";
+        }
+        final int[] choice = {checked};
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.settings_custom_pick_batch)
+                .setSingleChoiceItems(names, checked, (d, which) -> choice[0] = which)
+                .setNegativeButton("取消", null)
+                .setPositiveButton("加入", (d, w) -> viewModel.addCustomChars(
+                        fresh, choice[0] + 1, added -> Toast.makeText(this,
+                                getString(R.string.settings_custom_added, added),
+                                Toast.LENGTH_LONG).show()))
+                .show();
+    }
+
+    private static String join(List<String> chars) {
+        StringBuilder sb = new StringBuilder();
+        for (String ch : chars) {
+            if (sb.length() > 0) {
+                sb.append(' ');
+            }
+            sb.append(ch);
+        }
+        return sb.toString();
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+
     private void save() {
+        collectCustomRows();
+        CustomText.save(this, customEntries);
         Settings.setNickname(this, binding.editNickname.getText().toString());
         Settings.setUnlockPercent(this, parseInt(binding.editUnlock.getText().toString(),
                 Settings.DEFAULT_UNLOCK));

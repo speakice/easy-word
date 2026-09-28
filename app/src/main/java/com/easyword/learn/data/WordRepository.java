@@ -133,8 +133,9 @@ public class WordRepository {
                                 || !equals(lw.usage, old.getUsage())
                                 || old.getBatch() != lw.batch;
                         if (need) {
+                            // 批次不动：用户自己往字库里加过字（会重排批次），别被字库覆盖
                             wordDao.updateLibraryContent(old.getId(), lw.py, lw.rhyme,
-                                    joined, lw.usage, "常用", lw.batch);
+                                    joined, lw.usage, "常用", old.getBatch());
                         }
                     }
                 }

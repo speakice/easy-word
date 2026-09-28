@@ -43,9 +43,11 @@ public class WordViewModel extends AndroidViewModel {
         public final int[] batchKnown;
         /** 每一批已学的字数，下标 1~10。 */
         public final int[] batchLearned;
+        /** 每一批的总字数，下标 1~10。 */
+        public final int[] batchTotal;
 
         Stats(int total, int learned, int known, int unknown, int currentBatch,
-              int[] batchPercent, int[] batchKnown, int[] batchLearned) {
+              int[] batchPercent, int[] batchKnown, int[] batchLearned, int[] batchTotal) {
             this.total = total;
             this.learned = learned;
             this.known = known;
@@ -54,6 +56,7 @@ public class WordViewModel extends AndroidViewModel {
             this.batchPercent = batchPercent;
             this.batchKnown = batchKnown;
             this.batchLearned = batchLearned;
+            this.batchTotal = batchTotal;
         }
 
         /** 某一批的学习进度（0~100）。 */
@@ -78,6 +81,14 @@ public class WordViewModel extends AndroidViewModel {
                 return 0;
             }
             return batchLearned[batch];
+        }
+
+        /** 某一批总共有多少字。 */
+        public int totalOfBatch(int batch) {
+            if (batchTotal == null || batch < 1 || batch >= batchTotal.length) {
+                return 0;
+            }
+            return batchTotal[batch];
         }
     }
 
@@ -147,17 +158,19 @@ public class WordViewModel extends AndroidViewModel {
             int[] batchPercent = new int[11];
             int[] batchKnown = new int[11];
             int[] batchLearned = new int[11];
+            int[] batchTotal = new int[11];
             for (int b = 1; b <= 10; b++) {
-                int batchTotal = dao.countInBatch(b);
+                int totalInBatch = dao.countInBatch(b);
+                batchTotal[b] = totalInBatch;
                 batchKnown[b] = dao.countKnownInBatch(b);
                 batchLearned[b] = dao.countLearnedInBatch(b);
                 // 学习进度 = 已学比例（考试解锁也用它）
-                batchPercent[b] = batchTotal == 0
-                        ? 0 : batchLearned[b] * 100 / batchTotal;
+                batchPercent[b] = totalInBatch == 0
+                        ? 0 : batchLearned[b] * 100 / totalInBatch;
             }
             stats.postValue(new Stats(dao.countWords(), dao.countLearned(),
                     dao.countKnown(), dao.countUnknown(), currentBatch,
-                    batchPercent, batchKnown, batchLearned));
+                    batchPercent, batchKnown, batchLearned, batchTotal));
         });
     }
 
@@ -333,6 +346,118 @@ public class WordViewModel extends AndroidViewModel {
             new android.os.Handler(android.os.Looper.getMainLooper())
                     .post(() -> callback.accept(list));
         });
+    }
+
+    // ---------- 自定义文字（姓名 / 籍贯…加进字库） ----------
+
+    /** 一段文字的识字分析结果。 */
+    public static class TextAnalysis {
+        /** 已经在字库里的字。 */
+        public final List<String> known = new ArrayList<>();
+        /** 字库里没有、需要新增的字。 */
+        public final List<String> fresh = new ArrayList<>();
+    }
+
+    /** 分析用户填写的资料：哪些字字库里已有，哪些是新的。 */
+    public void analyzeCustomText(String text,
+                                  java.util.function.Consumer<TextAnalysis> callback) {
+        repository.execute(() -> {
+            java.util.Set<String> existing = new HashSet<>();
+            for (Word w : dao().getAllWordsSync()) {
+                existing.add(w.getWord());
+            }
+            TextAnalysis result = new TextAnalysis();
+            java.util.Set<String> seen = new HashSet<>();
+            if (text != null) {
+                for (char c : text.toCharArray()) {
+                    if (c < '\u4e00' || c > '\u9fff') {
+                        continue;   // 只处理汉字
+                    }
+                    String ch = String.valueOf(c);
+                    if (!seen.add(ch)) {
+                        continue;
+                    }
+                    if (existing.contains(ch)) {
+                        result.known.add(ch);
+                    } else {
+                        result.fresh.add(ch);
+                    }
+                }
+            }
+            new android.os.Handler(android.os.Looper.getMainLooper())
+                    .post(() -> callback.accept(result));
+        });
+    }
+
+    /**
+     * 把新字插入指定批次：前面批次已有的字会跳过；每批最多 100 字，
+     * 超出的往后顺延，总共超过 1000 的都会落在第 10 批。
+     */
+    public void addCustomChars(List<String> chars, int targetBatch,
+                               java.util.function.Consumer<Integer> callback) {
+        android.content.Context app = getApplication();
+        repository.execute(() -> {
+            WordDao dao = dao();
+            java.util.Set<String> existing = new HashSet<>();
+            for (Word w : dao.getAllWordsSync()) {
+                existing.add(w.getWord());
+            }
+            int added = 0;
+            // 新字用负 id，排在所在批次的最前面，这样"顺延出去"的是原有字的末尾，
+            // 她自己加的字能留在选定的那一批里
+            int lowestId = 0;
+            for (Word w : dao.getAllWordsSync()) {
+                lowestId = Math.min(lowestId, w.getId());
+            }
+            int nextId = lowestId - 1 - chars.size();
+            for (String ch : chars) {
+                if (ch == null || ch.isEmpty() || existing.contains(ch)) {
+                    continue;   // 前面批次已经有的字不再重复添加
+                }
+                List<com.easyword.learn.utils.CustomText.Entry> hits =
+                        com.easyword.learn.utils.CustomText.entriesContaining(app, ch);
+                StringBuilder words = new StringBuilder();
+                StringBuilder usage = new StringBuilder();
+                String rhyme = "这是你在资料里常写的字，多写几遍就记住了。";
+                for (com.easyword.learn.utils.CustomText.Entry e : hits) {
+                    String text = e.value == null || e.value.trim().isEmpty()
+                            ? e.label : e.label + e.value;
+                    if (words.length() > 0) {
+                        words.append(" ");
+                    }
+                    if (words.toString().split("\\s+").length <= 3) {
+                        words.append(text);
+                    }
+                    if (usage.length() == 0) {
+                        usage.append(e.label).append("：").append(e.value);
+                        rhyme = "你在「" + e.label + "」里会写到这个字。";
+                    }
+                }
+                Word word = new Word();
+                word.setWord(ch);
+                word.setPinyin(com.easyword.learn.utils.WordLibrary.pinyin(app, ch));
+                word.setCategory("我的资料");
+                word.setWords(words.toString());
+                word.setUsage(usage.toString());
+                word.setRhyme(rhyme);
+                word.setBatch(Math.max(1, Math.min(10, targetBatch)));
+                word.setId(nextId++);
+                dao.insert(word);
+                existing.add(ch);
+                added++;
+            }
+            // 每批最多 100 字：多出来的依次顺延，最后都堆到第 10 批
+            for (int b = 1; b <= 9; b++) {
+                List<Integer> ids = dao.idsInBatch(b);
+                for (int i = 100; i < ids.size(); i++) {
+                    dao.updateBatch(ids.get(i), b + 1);
+                }
+            }
+            final int addedCount = added;
+            new android.os.Handler(android.os.Looper.getMainLooper())
+                    .post(() -> callback.accept(addedCount));
+        });
+        refreshStudyOrder();
     }
 
     // ---------- 单元测试 / 期末考试 ----------

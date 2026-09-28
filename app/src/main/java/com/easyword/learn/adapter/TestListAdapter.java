@@ -29,6 +29,7 @@ public class TestListAdapter extends RecyclerView.Adapter<TestListAdapter.Holder
     private final List<TestCatalog.TestSpec> items = new ArrayList<>();
     private final OnTestClick listener;
     private int[] batchPercent = new int[11];
+    private int[] batchTotal = new int[11];
     private TestScores scores;
     private int unlockPercent = Settings.DEFAULT_UNLOCK;
     private int passScore = Settings.DEFAULT_PASS;
@@ -37,13 +38,16 @@ public class TestListAdapter extends RecyclerView.Adapter<TestListAdapter.Holder
         this.listener = listener;
     }
 
-    public void setData(List<TestCatalog.TestSpec> specs, int[] batchPercent) {
+    public void setData(List<TestCatalog.TestSpec> specs, int[] batchPercent, int[] batchTotal) {
         items.clear();
         if (specs != null) {
             items.addAll(specs);
         }
         if (batchPercent != null) {
             this.batchPercent = batchPercent;
+        }
+        if (batchTotal != null) {
+            this.batchTotal = batchTotal;
         }
         notifyDataSetChanged();
     }
@@ -111,8 +115,8 @@ public class TestListAdapter extends RecyclerView.Adapter<TestListAdapter.Holder
             holder.itemView.setAlpha(0.7f);
         } else {
             String range = spec.milestone
-                    ? "🏁 " + spec.range
-                    : spec.range + " · 学习进度 " + percent + "%";
+                    ? "🏁 " + rangeText(spec)
+                    : rangeText(spec) + " · 学习进度 " + percent + "%";
             holder.binding.textTestRange.setText(range);
             holder.itemView.setAlpha(1f);
             int best = scores.best(spec.id);
@@ -140,6 +144,28 @@ public class TestListAdapter extends RecyclerView.Adapter<TestListAdapter.Holder
         }
         return "🔒 第 " + spec.toBatch + " 批学习进度 " + percent
                 + "%（到 " + unlockPercent + "% 解锁这个考试）";
+    }
+
+    /** 批次范围文字（字数按实际字库算，用户加过字也会跟着变）。 */
+    private String rangeText(TestCatalog.TestSpec spec) {
+        int total = 0;
+        for (int b = spec.fromBatch; b <= spec.toBatch; b++) {
+            total += totalOfBatch(b);
+        }
+        if (spec.fromBatch == spec.toBatch) {
+            return "第 " + spec.fromBatch + " 批 · " + total + " 字";
+        }
+        if (spec.toBatch >= 10) {
+            return "全部 10 批 · " + total + " 字";
+        }
+        return "第 " + spec.fromBatch + "~" + spec.toBatch + " 批 · " + total + " 字";
+    }
+
+    private int totalOfBatch(int batch) {
+        if (batchTotal == null || batch < 1 || batch >= batchTotal.length) {
+            return 0;
+        }
+        return batchTotal[batch];
     }
 
     @Override

@@ -53,6 +53,15 @@ public interface WordDao {
     @Query("SELECT * FROM words WHERE batch <= :batch AND pinyin != ''")
     List<Word> getWordsUpToBatchWithPinyinSync(int batch);
 
+    @Query("SELECT id FROM words WHERE batch = :batch ORDER BY id ASC")
+    List<Integer> idsInBatch(int batch);
+
+    @Query("UPDATE words SET batch = :batch WHERE id = :id")
+    void updateBatch(int id, int batch);
+
+    @Query("SELECT COUNT(*) FROM words WHERE word = :ch")
+    int countByChar(String ch);
+
     @Query("SELECT * FROM words WHERE is_learned = 1")
     List<Word> getLearnedWordsSync();
 

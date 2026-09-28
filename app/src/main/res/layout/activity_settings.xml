@@ -225,6 +225,66 @@
                 android:textColor="@color/gray"
                 android:textSize="12sp" />
 
+            <!-- 常用写字：把自己的姓名、籍贯等加进字库一起学 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:layout_marginStart="6dp"
+                android:text="@string/settings_custom"
+                android:textColor="@color/gray"
+                android:textSize="13sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="6dp"
+                android:text="@string/settings_custom_hint"
+                android:textColor="#808080"
+                android:textSize="12sp" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/presetBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="2dp"
+                    android:paddingEnd="2dp" />
+            </HorizontalScrollView>
+
+            <LinearLayout
+                android:id="@+id/customBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical" />
+
+            <Button
+                android:id="@+id/btnAddCustom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_semi_black"
+                android:text="@string/settings_custom_add"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnMergeCustom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_semi_black"
+                android:text="@string/settings_custom_merge"
+                android:textColor="@color/yellow"
+                android:textSize="16sp" />
+
             <Button
                 android:id="@+id/btnSaveSettings"
                 android:layout_width="match_parent"

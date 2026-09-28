@@ -42,6 +42,16 @@
     <string name="settings_save">保存</string>
     <string name="settings_saved">设置已保存</string>
     <string name="settings_pick_failed">读取图片失败，换一张试试</string>
+    <string name="settings_custom">常用写字（签字、填表）</string>
+    <string name="settings_custom_hint">把常写的字加进来，比如姓名、性别、籍贯、住址；下面点「把新字加入字库」会挑出字库里没有的字，让你选加到哪一批。</string>
+    <string name="settings_custom_add">＋ 添加一项</string>
+    <string name="settings_custom_remove">删除这一项</string>
+    <string name="settings_custom_merge">把新字加入字库</string>
+    <string name="settings_custom_empty">还没有填内容，先在上面写点常写的信息吧</string>
+    <string name="settings_custom_all_known">这些字字库里都有了，不用新增：%1$s</string>
+    <string name="settings_custom_analysis">共 %1$d 个字：字库里已有 %2$d 个，需要新增 %3$d 个。\n\n新增的字：%4$s\n\n要加到哪一批？</string>
+    <string name="settings_custom_pick_batch">选择要加入的批次</string>
+    <string name="settings_custom_added">已把 %1$d 个新字加入字库</string>
 
     <!-- 单元测试 / 期末考试 -->
     <string name="test_quit">退出</string>
