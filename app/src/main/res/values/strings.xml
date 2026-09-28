@@ -2,6 +2,15 @@
 <resources>
     <string name="app_name">轻松识字</string>
     <string name="slogan">一笔一划，快乐识字</string>
+
+    <!-- 启动页 / 我的页 的暖心话：想换词只改这里 -->
+    <string-array name="splash_taglines">
+        <item>那会儿没赶上，现在不晚</item>
+        <item>字认得，就不用求人了</item>
+        <item>从“睁眼瞎”，到睁开眼</item>
+    </string-array>
+    <string name="profile_tagline">一个字一个字，慢慢认</string>
+
     <string name="tab_learn">识字</string>
     <string name="tab_quiz">测验</string>
     <string name="tab_read">阅读</string>

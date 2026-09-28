@@ -20,11 +20,18 @@
 
 安装时如果系统提示"未知来源"，在弹窗里允许一次即可。装好打开就能用，全程离线。
 
-<sub>也可以直接下这个版本：[EasyWord-v1.1.apk](https://github.com/speakice/easy-word/releases/download/v1.1/EasyWord-v1.1.apk)（5.7 MB）</sub>
+<sub>也可以直接下这个版本：[EasyWord-v1.2.apk](https://github.com/speakice/easy-word/releases/download/v1.2/EasyWord-v1.2.apk)（5.7 MB）</sub>
 
 ---
 
 ## 更新日志
+
+### v1.2
+
+**新增**
+
+- **启动页**：打开 App 先看到一句写给长辈的话，每次随机一句 ——「那会儿没赶上，现在不晚」「字认得，就不用求人了」「从“睁眼瞎”，到睁开眼」（最后一句会把「**睁开眼**」加粗提亮）；停留约 1.8 秒自动进主页，轻触屏幕可立刻跳过
+- **我的页**：个人信息卡里加了一行签名「一个字一个字，慢慢认」
 
 ### v1.1
 

@@ -86,6 +86,15 @@
                     android:textColor="@color/gray"
                     android:textSize="13sp"
                     android:text="950 字学习进度：0%" />
+
+                <TextView
+                    android:id="@+id/textProfileTagline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/profile_tagline"
+                    android:textColor="#FFD54F"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <!-- 设置：放在个人信息右上角 -->
