@@ -17,10 +17,11 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * 全年学习热力图：白底卡片，一格一天，从 1 月 1 日排到 12 月 31 日。
+ * 学习热力图：白底卡片，一格一天，只画指定的半年区间（1~6 月或 7~12 月）。
  *
  * <p>列 = 周（从左到右按时间推进），行 = 星期（周一在最上面，周日最下面），
- * 所以每一列竖着看就是一周。绿色越深表示那天学得越久，没学是浅灰。</p>
+ * 所以每一列竖着看就是一周。绿色越深表示那天学得越久，没学是浅灰。
+ * 上方月份标签跟着区间自动变化。</p>
  */
 public class HeatmapView extends View {
 
@@ -43,6 +44,10 @@ public class HeatmapView extends View {
     private float padSize;
     private float headerHeight;
     private int columnCount = 53;
+
+    /** 当前显示的区间（默认整天）。 */
+    private long rangeStart = Long.MIN_VALUE;
+    private long rangeEnd = Long.MAX_VALUE;
 
     public HeatmapView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -74,6 +79,33 @@ public class HeatmapView extends View {
         invalidate();
     }
 
+    /** 设置要显示的半年区间（start/end 都是毫秒时间戳）。 */
+    public void setRange(long startMillis, long endMillis) {
+        rangeStart = startMillis;
+        rangeEnd = endMillis;
+        columnCount = weeksBetween(startMillis, endMillis);
+        requestLayout();
+        invalidate();
+    }
+
+    /** 区间占几周（用于算方格宽度）。 */
+    private static int weeksBetween(long start, long end) {
+        Calendar first = Calendar.getInstance();
+        first.setTimeInMillis(start);
+        first.set(Calendar.HOUR_OF_DAY, 0);
+        first.set(Calendar.MINUTE, 0);
+        first.set(Calendar.SECOND, 0);
+        first.set(Calendar.MILLISECOND, 0);
+        first.add(Calendar.DAY_OF_YEAR, -((first.get(Calendar.DAY_OF_WEEK) + 5) % 7));
+
+        Calendar last = Calendar.getInstance();
+        last.setTimeInMillis(end);
+        last.add(Calendar.DAY_OF_YEAR, 6 - (last.get(Calendar.DAY_OF_WEEK) + 5) % 7);
+
+        long days = (last.getTimeInMillis() - first.getTimeInMillis()) / 86_400_000L + 1;
+        return (int) Math.max(1, (days + 6) / 7);
+    }
+
     private int colorFor(long millis, boolean isFuture) {
         if (isFuture) {
             return FUTURE;
@@ -99,17 +131,22 @@ public class HeatmapView extends View {
         canvas.drawRoundRect(cardRect, radius, radius, cardPaint);
 
         Calendar today = Calendar.getInstance();
-        int year = today.get(Calendar.YEAR);
 
-        // 从 1 月 1 日所在那一周的周一开始画，保证每一列都是完整的一周
+        // 从区间第一天所在那一周的周一开始画，保证每一列都是完整的一周
         Calendar day = Calendar.getInstance();
-        day.set(year, Calendar.JANUARY, 1);
+        day.setTimeInMillis(rangeStart == Long.MIN_VALUE ? today.getTimeInMillis() : rangeStart);
+        day.set(Calendar.HOUR_OF_DAY, 0);
+        day.set(Calendar.MINUTE, 0);
+        day.set(Calendar.SECOND, 0);
+        day.set(Calendar.MILLISECOND, 0);
         int mondayOffset = (day.get(Calendar.DAY_OF_WEEK) + 5) % 7;  // 周一 = 0
         day.add(Calendar.DAY_OF_YEAR, -mondayOffset);
         Calendar first = (Calendar) day.clone();
+        long periodStart = startOfDay(day.getTimeInMillis() + mondayOffset * 86_400_000L);
+        long periodEnd = rangeEnd == Long.MAX_VALUE ? Long.MAX_VALUE : rangeEnd;
 
         Calendar end = Calendar.getInstance();
-        end.set(year, Calendar.DECEMBER, 31);
+        end.setTimeInMillis(periodEnd == Long.MAX_VALUE ? today.getTimeInMillis() : periodEnd);
         end.add(Calendar.DAY_OF_YEAR, 6 - (end.get(Calendar.DAY_OF_WEEK) + 5) % 7);
 
         long totalDays = (end.getTimeInMillis() - first.getTimeInMillis()) / 86_400_000L + 1;
@@ -130,8 +167,9 @@ public class HeatmapView extends View {
         for (int i = 0; i < totalDays; i++) {
             int col = i / 7;
             int row = i % 7;
-            boolean inYear = cursor.get(Calendar.YEAR) == year;
-            if (inYear) {
+            long cursorStart = startOfDay(cursor.getTimeInMillis());
+            boolean inPeriod = cursorStart >= periodStart && cursorStart <= periodEnd;
+            if (inPeriod) {
                 String key = fmt.format(cursor.getTime());
                 long millis = dailyMillis.containsKey(key) ? dailyMillis.get(key) : 0L;
                 boolean future = startOfDay(cursor.getTimeInMillis()) > todayStart;

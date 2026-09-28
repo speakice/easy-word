@@ -19,6 +19,7 @@ import com.easyword.learn.ui.ProfileFragment;
 import com.easyword.learn.ui.QuizFragment;
 import com.easyword.learn.ui.ReadingFragment;
 import com.easyword.learn.viewmodel.WordViewModel;
+import com.easyword.learn.utils.InstallInfo;
 
 /**
  * 主页：底部四 Tab（识字 / 测验 / 阅读 / 我的）切换，全屏沉浸式。
@@ -45,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // 记下第一次打开的时间：热力图的半年区间从这里开始算
+        InstallInfo.ensureRecorded(this);
 
         // 字库初始化放在 Activity 里：不管先从哪个 Tab 进来，数据都已就绪
         new ViewModelProvider(this).get(WordViewModel.class).init();

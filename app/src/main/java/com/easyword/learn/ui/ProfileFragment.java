@@ -18,9 +18,13 @@ import com.easyword.learn.data.DailyRecord;
 import com.easyword.learn.data.TestCatalog;
 import com.easyword.learn.data.TestScores;
 import com.easyword.learn.databinding.FragmentProfileBinding;
+import com.easyword.learn.utils.HalfYear;
+import com.easyword.learn.utils.InstallInfo;
 import com.easyword.learn.viewmodel.WordViewModel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +42,7 @@ public class ProfileFragment extends Fragment {
     private TextView knownValue;
     private TextView unknownValue;
     private TextView favoriteValue;
+    private final List<HalfYear> periods = new ArrayList<>();
 
     @Nullable
     @Override
@@ -85,6 +90,7 @@ public class ProfileFragment extends Fragment {
 
         refreshScoresSummary();
         refreshListCounts();
+        setupPeriods();
         refreshHeatmap();
     }
 
@@ -165,5 +171,52 @@ public class ProfileFragment extends Fragment {
             }
             binding.heatmap.setData(map);
         });
+    }
+
+    /** 时间切换：从安装所在的半年开始，每过半年多一个选项。 */
+    private void setupPeriods() {
+        HalfYear from = HalfYear.of(InstallInfo.installTime(requireContext()));
+        HalfYear now = HalfYear.of(System.currentTimeMillis());
+        periods.clear();
+        periods.addAll(HalfYear.between(from, now));
+
+        binding.periodBox.removeAllViews();
+        // 只有一个半年时不用切换，整行不显示
+        boolean needSwitch = periods.size() > 1;
+        binding.periodScroll.setVisibility(needSwitch ? View.VISIBLE : View.GONE);
+        if (needSwitch) {
+            for (HalfYear period : periods) {
+                TextView chip = new TextView(requireContext());
+                chip.setText(period.label());
+                chip.setTextSize(14f);
+                chip.setGravity(android.view.Gravity.CENTER);
+                int padH = dp(14), padV = dp(7);
+                chip.setPadding(padH, padV, padH, padV);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                lp.rightMargin = dp(8);
+                chip.setLayoutParams(lp);
+                chip.setOnClickListener(v -> selectPeriod(period));
+                binding.periodBox.addView(chip);
+            }
+        }
+        selectPeriod(periods.get(periods.size() - 1));   // 默认看最近的半年
+    }
+
+    private void selectPeriod(HalfYear period) {
+        for (int i = 0; i < binding.periodBox.getChildCount() && i < periods.size(); i++) {
+            TextView chip = (TextView) binding.periodBox.getChildAt(i);
+            boolean active = periods.get(i).equals(period);
+            chip.setBackgroundResource(active
+                    ? R.drawable.bg_chip_selected : R.drawable.bg_chip);
+            chip.setTextColor(active ? 0xFF000000 : 0xFFCCCCCC);
+        }
+        // 月份标签跟着区间走
+        binding.heatmap.setRange(period.startMillis(), period.endMillis());
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
     }
 }
