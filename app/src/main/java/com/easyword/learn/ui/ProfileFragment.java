@@ -62,8 +62,9 @@ public class ProfileFragment extends Fragment {
                 () -> startActivity(ScoresActivity.intent(requireContext())));
         certificatesValue = addRow(binding.rowBoxMine, "🎖", "毕业证书", "",
                 () -> startActivity(CertificatesActivity.intent(requireContext())));
-        addRow(binding.rowBoxMine, "⚙️", "设置", "",
-                () -> startActivity(SettingsActivity.intent(requireContext())));
+        // 设置挪到个人信息右上角的小齿轮
+        binding.btnSettingsHeader.setOnClickListener(v ->
+                startActivity(SettingsActivity.intent(requireContext())));
 
         allListsValue = addRow(binding.rowBoxLists, "📚", "全部字表", "",
                 () -> startActivity(GradesActivity.intent(requireContext())));
@@ -75,6 +76,11 @@ public class ProfileFragment extends Fragment {
                 () -> openList(WordViewModel.TYPE_UNKNOWN, "错字集"));
         favoriteValue = addRow(binding.rowBoxLists, "⭐", "已收藏字表", "",
                 () -> openList(WordViewModel.TYPE_FAVORITE, "已收藏字表"));
+
+        addRow(binding.rowBoxExtend, "🔤", "汉语拼音", "声母 · 韵母",
+                () -> startActivity(PinyinActivity.intent(requireContext())));
+        addRow(binding.rowBoxExtend, "🔢", "数字", "整数 · 小数 · 计算",
+                () -> startActivity(NumberActivity.intent(requireContext())));
 
         viewModel.getStats().observe(getViewLifecycleOwner(), stats -> {
             if (stats == null) {

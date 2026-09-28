@@ -66,6 +66,7 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
 
     // ---- 自动朗读（歌词跟随）状态 ----
     private static final int TYPE_CHAR = 0;
+    private static final int TYPE_SPELL = 4;
     private static final int TYPE_WORD = 1;
     private static final int TYPE_RHYME = 2;
     private static final int TYPE_USAGE = 3;
@@ -111,7 +112,8 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
     }
 
     /**
-     * 自动朗读当前卡片：字 → 词组(xx的x) → 顺口溜 → 场景，并逐行高亮跟随。
+     * 自动朗读当前卡片：字 → 拼读（hui，喝，威，hui）→ 词组(xx的x) → 巧记 → 场景，
+     * 并逐行高亮跟随。
      */
     public void startReading(ItemWordCardBinding binding, Word word) {
         stopReading();
@@ -204,6 +206,12 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
 
         segments.add(new Segment(TYPE_CHAR, word.getWord(), word.getWord(), -1, null));
 
+        // 拼读：先读整个音节，再读声母、韵母，最后再读一遍（会 → hui，喝，威，hui）
+        String spelling = com.easyword.learn.utils.PinyinHelper.spelling(word.getPinyin());
+        if (!spelling.isEmpty()) {
+            segments.add(new Segment(TYPE_SPELL, spelling, null, -1, null));
+        }
+
         String[] wordArr = word.getWords() == null ? new String[0]
                 : word.getWords().trim().split("\\s+");
         int[] starts = new int[wordArr.length];
@@ -235,7 +243,13 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
                 b.textWord.setTextColor(0xFFFFEB3B);
                 b.strokeView.replay();
                 break;
+            case TYPE_SPELL:
+                // 拼读时把拼音标黄，方便跟着念
+                b.textPinyin.setTextColor(0xFFFFEB3B);
+                break;
             case TYPE_WORD:
+                // 拼读读完了，拼音恢复成灰色
+                b.textPinyin.setTextColor(0xFFB0B0B0);
                 if (segment.wordStarts != null && segment.wordIndex >= 0 && wordsDisplayText != null) {
                     int start = segment.wordStarts[segment.wordIndex];
                     // 连词与词之间的「·」一起染黄，看起来才是连续推进的进度
@@ -248,11 +262,13 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
                 }
                 break;
             case TYPE_RHYME:
+                b.textPinyin.setTextColor(0xFFB0B0B0);
                 if (karaokeRhyme != null) {
                     karaokeRhyme.start(b.textRhyme.getText(), 0, 0, b.textRhyme.length());
                 }
                 break;
             case TYPE_USAGE:
+                b.textPinyin.setTextColor(0xFFB0B0B0);
                 if (karaokeUsage != null) {
                     karaokeUsage.start(b.textUsage.getText(), 0, 0, b.textUsage.length());
                 }
@@ -320,6 +336,7 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
         }
         stopKaraoke();
         b.textWord.setTextColor(Color.WHITE);
+        b.textPinyin.setTextColor(0xFFB0B0B0);
         b.textRhyme.setBackground(null);
         b.textUsage.setBackground(null);
         b.textWords.setBackground(null);
@@ -348,8 +365,13 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
             }
         });
 
-        binding.btnPlayWord.setOnClickListener(v ->
-                speakAt(holder, holder.binding.textWord.getText().toString()));
+        // 大字旁边的喇叭：跟着读一遍（认字 → 拼读 → 词组 → 巧记 → 场景）
+        binding.btnPlayWord.setOnClickListener(v -> {
+            Word word = wordOf(holder);
+            if (word != null) {
+                startReading(holder.binding, word);
+            }
+        });
         // 点某一行的喇叭：朗读这一行，同时逐字跟着变色
         binding.btnPlayWords.setOnClickListener(v -> {
             Word word = wordOf(holder);
@@ -379,7 +401,9 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
         holder.binding.textWord.setText(word.getWord());
         holder.binding.textWord.setTextColor(Color.WHITE);
         holder.binding.strokeView.bindWord(holder.binding.textWord, word.getWord());
-        holder.binding.textPinyin.setText(word.getPinyin());
+        // 拼音把声母和韵母分开写：hui → "h ui"
+        holder.binding.textPinyin.setText(
+                com.easyword.learn.utils.PinyinHelper.display(word.getPinyin()));
         // 行首的喇叭就是这三行的标记，所以不再显示“词组/巧记/场景”这些字
         holder.binding.textRhyme.setText(word.getRhyme());
         holder.binding.textWords.setText(wordsDisplayText(word));

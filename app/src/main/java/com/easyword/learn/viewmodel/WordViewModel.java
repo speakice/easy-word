@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * 主视图模型：字库初始化、批次解锁（每组 80% 识字后进入下一组）、
+ * 主视图模型：字库初始化、批次解锁（每组学过 80% 后进入下一组）、
  * 记忆曲线随机顺序、单字学习计时、测验权重与各项统计。
  */
 public class WordViewModel extends AndroidViewModel {
@@ -37,7 +37,7 @@ public class WordViewModel extends AndroidViewModel {
         public final int known;
         public final int unknown;
         public final int currentBatch;
-        /** 每一批（年级）的识字进度百分比，下标 1~10；考试解锁就看这个。 */
+        /** 每一批（年级）的已学进度百分比，下标 1~10；批次解锁和考试解锁都看这个。 */
         public final int[] batchPercent;
         /** 每一批已识的字数，下标 1~10。 */
         public final int[] batchKnown;

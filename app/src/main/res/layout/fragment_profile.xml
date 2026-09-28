@@ -87,6 +87,18 @@
                     android:textSize="13sp"
                     android:text="950 字学习进度：0%" />
             </LinearLayout>
+
+            <!-- 设置：放在个人信息右上角 -->
+            <TextView
+                android:id="@+id/btnSettingsHeader"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="top"
+                android:background="@drawable/bg_round_button"
+                android:contentDescription="@string/settings_entry"
+                android:gravity="center"
+                android:text="⚙️"
+                android:textSize="18sp" />
         </LinearLayout>
 
         <!-- 学习热力图：整年铺满一行，不滚动、不带外框 -->
@@ -152,6 +164,22 @@
 
         <LinearLayout
             android:id="@+id/rowBoxLists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="vertical" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="6dp"
+            android:text="@string/extend_group"
+            android:textColor="@color/gray"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:id="@+id/rowBoxExtend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"

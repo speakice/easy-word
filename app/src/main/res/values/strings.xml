@@ -52,6 +52,19 @@
     <string name="settings_custom_analysis">共 %1$d 个字：字库里已有 %2$d 个，需要新增 %3$d 个。\n\n新增的字：%4$s\n\n要加到哪一批？</string>
     <string name="settings_custom_pick_batch">选择要加入的批次</string>
     <string name="settings_custom_added">已把 %1$d 个新字加入字库</string>
+    <string name="extend_pinyin">汉语拼音</string>
+    <string name="extend_number">数字</string>
+    <string name="extend_group">扩展学习</string>
+    <string name="pinyin_title">汉语拼音</string>
+    <string name="pinyin_hint">点一下就能听读音：声母和韵母分开练</string>
+    <string name="pinyin_initials">声母（23 个）</string>
+    <string name="pinyin_finals">韵母（24 个）</string>
+    <string name="number_title">数字</string>
+    <string name="number_hint">点一下就能听读音；算式也能听，用来练口算</string>
+    <string name="number_integer">整数（1~100、整百、整千）</string>
+    <string name="number_decimal">小数（1.1~2.0）</string>
+    <string name="number_add">99 加法表</string>
+    <string name="number_multiply">99 乘法表</string>
 
     <!-- 单元测试 / 期末考试 -->
     <string name="test_quit">退出</string>
