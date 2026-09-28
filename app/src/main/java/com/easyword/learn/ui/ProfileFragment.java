@@ -20,6 +20,7 @@ import com.easyword.learn.data.TestScores;
 import com.easyword.learn.databinding.FragmentProfileBinding;
 import com.easyword.learn.utils.HalfYear;
 import com.easyword.learn.utils.InstallInfo;
+import com.easyword.learn.utils.Settings;
 import com.easyword.learn.viewmodel.WordViewModel;
 
 import java.util.ArrayList;
@@ -61,6 +62,8 @@ public class ProfileFragment extends Fragment {
                 () -> startActivity(ScoresActivity.intent(requireContext())));
         certificatesValue = addRow(binding.rowBoxMine, "🎖", "毕业证书", "",
                 () -> startActivity(CertificatesActivity.intent(requireContext())));
+        addRow(binding.rowBoxMine, "⚙️", "设置", "",
+                () -> startActivity(SettingsActivity.intent(requireContext())));
 
         allListsValue = addRow(binding.rowBoxLists, "📚", "全部字表", "",
                 () -> startActivity(GradesActivity.intent(requireContext())));
@@ -97,8 +100,33 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        applyProfile();
         refreshScoresSummary();
         refreshListCounts();
+    }
+
+    /** 昵称和头像跟着设置走。 */
+    private void applyProfile() {
+        binding.textNickname.setText(Settings.nickname(requireContext()));
+        String path = Settings.avatarPath(requireContext());
+        if (path != null && new java.io.File(path).exists()) {
+            android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeFile(path);
+            if (bitmap != null) {
+                binding.imgAvatar.setImageBitmap(bitmap);
+                binding.imgAvatar.setClipToOutline(true);
+                binding.imgAvatar.setOutlineProvider(new android.view.ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, android.graphics.Outline outline) {
+                        outline.setOval(0, 0, view.getWidth(), view.getHeight());
+                    }
+                });
+                binding.imgAvatar.setVisibility(View.VISIBLE);
+                binding.textAvatar.setVisibility(View.GONE);
+                return;
+            }
+        }
+        binding.imgAvatar.setVisibility(View.GONE);
+        binding.textAvatar.setVisibility(View.VISIBLE);
     }
 
     /** 每个字表分类显示当前有多少个字。 */

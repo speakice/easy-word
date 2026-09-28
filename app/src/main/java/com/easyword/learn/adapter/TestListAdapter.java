@@ -10,6 +10,7 @@ import com.easyword.learn.R;
 import com.easyword.learn.data.TestCatalog;
 import com.easyword.learn.data.TestScores;
 import com.easyword.learn.databinding.ItemTestBinding;
+import com.easyword.learn.utils.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +21,6 @@ import java.util.List;
  */
 public class TestListAdapter extends RecyclerView.Adapter<TestListAdapter.Holder> {
 
-    /** 本批识字率达到这个百分比，年级期末考试才解锁。 */
-    public static final int UNLOCK_PERCENT = 80;
-
     /** 点击回调。 */
     public interface OnTestClick {
         void onTestClick(TestCatalog.TestSpec spec);
@@ -32,6 +30,8 @@ public class TestListAdapter extends RecyclerView.Adapter<TestListAdapter.Holder
     private final OnTestClick listener;
     private int[] batchPercent = new int[11];
     private TestScores scores;
+    private int unlockPercent = Settings.DEFAULT_UNLOCK;
+    private int passScore = Settings.DEFAULT_PASS;
 
     public TestListAdapter(OnTestClick listener) {
         this.listener = listener;
@@ -55,9 +55,9 @@ public class TestListAdapter extends RecyclerView.Adapter<TestListAdapter.Holder
         }
         String prerequisite = prerequisiteTestId(spec);
         if (prerequisite != null) {
-            return scores.best(prerequisite) >= 60;
+            return scores.best(prerequisite) >= passScore;
         }
-        return percentOfBatch(spec.toBatch) >= UNLOCK_PERCENT;
+        return percentOfBatch(spec.toBatch) >= unlockPercent;
     }
 
     /** 毕业考试的前置：小升初要六年级期末及格，中考要初三期末及格。 */
@@ -92,6 +92,9 @@ public class TestListAdapter extends RecyclerView.Adapter<TestListAdapter.Holder
         if (scores == null) {
             scores = new TestScores(holder.itemView.getContext());
         }
+        // 每次绑定都重新读一遍设置，改完门槛回来立刻生效
+        unlockPercent = Settings.unlockPercent(holder.itemView.getContext());
+        passScore = Settings.passScore(holder.itemView.getContext());
         // 里程碑考试（小升初 / 中考）用金色卡片标出来
         holder.itemView.setBackgroundResource(spec.milestone
                 ? R.drawable.bg_card_milestone : R.drawable.bg_card);
@@ -119,7 +122,8 @@ public class TestListAdapter extends RecyclerView.Adapter<TestListAdapter.Holder
                         spec.milestone ? 0xFFFFB300 : 0xFF9E9E9E);
             } else {
                 holder.binding.textTestScore.setText("最好 " + best + " 分");
-                holder.binding.textTestScore.setTextColor(best >= 60 ? 0xFFFFEB3B : 0xFFFF6B6B);
+                holder.binding.textTestScore.setTextColor(
+                        best >= passScore ? 0xFFFFEB3B : 0xFFFF6B6B);
             }
         }
         holder.itemView.setOnClickListener(v -> listener.onTestClick(spec));
@@ -135,7 +139,7 @@ public class TestListAdapter extends RecyclerView.Adapter<TestListAdapter.Holder
             return "🔒 初中三年级期末考试及格后解锁";
         }
         return "🔒 第 " + spec.toBatch + " 批学习进度 " + percent
-                + "%（到 " + UNLOCK_PERCENT + "% 解锁这个考试）";
+                + "%（到 " + unlockPercent + "% 解锁这个考试）";
     }
 
     @Override

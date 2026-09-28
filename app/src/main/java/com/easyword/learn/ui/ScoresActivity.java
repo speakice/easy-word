@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.easyword.learn.data.TestCatalog;
 import com.easyword.learn.data.TestScores;
+import com.easyword.learn.utils.Settings;
 import com.easyword.learn.databinding.ActivityScoresBinding;
 import com.easyword.learn.databinding.ItemScoreRowBinding;
 
@@ -53,9 +54,9 @@ public class ScoresActivity extends AppCompatActivity {
             row.textScoreTitle.setText(when + "  " + (spec.milestone ? "🏁 " : "") + spec.title);
             row.textScoreValue.setText(attempt.score + " 分");
             row.textScoreValue.setTextColor(
-                    attempt.score >= 60 ? 0xFFFFEB3B : 0xFFFF6B6B);
+                    attempt.score >= Settings.passScore(this) ? 0xFFFFEB3B : 0xFFFF6B6B);
             int best = scores.best(spec.id);
-            String detail = spec.range + " · " + TestScores.comment(attempt.score);
+            String detail = spec.range + " · " + Settings.comment(this, attempt.score);
             if (attempt.count > 1) {
                 detail += " · 当天考了 " + attempt.count + " 次，取最好";
             }

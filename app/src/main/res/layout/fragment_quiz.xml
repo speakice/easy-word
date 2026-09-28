@@ -21,7 +21,8 @@
         android:gravity="center"
         android:textColor="@color/gray"
         android:textSize="13sp"
-        android:text="不限次数，随时可以重考 · 学习进度到 80% 解锁该年级考试" />
+        android:id="@+id/textQuizHint"
+        android:text="不限次数，随时可以重考" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/testList"

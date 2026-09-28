@@ -51,10 +51,11 @@ public class GradesActivity extends AppCompatActivity {
                     getLayoutInflater(), binding.gradeBox, false);
             String name = TestCatalog.batchName(batch);
             int known = stats.knownOfBatch(batch);
+            int learned = stats.learnedOfBatch(batch);
             int percent = stats.percentOfBatch(batch);
             row.textGradeName.setText(name);
-            row.textGradeDetail.setText("已识 " + known + " / " + total
-                    + " · 学习进度 " + percent + "%");
+            row.textGradeDetail.setText("已学 " + learned + " / " + total
+                    + " · 已识 " + known + " · 学习进度 " + percent + "%");
             row.textGradeCount.setText(total + " 字");
             row.textGradeCount.setTextColor(percent >= 80 ? 0xFFFFEB3B : 0xFF9E9E9E);
             final int b = batch;

@@ -56,7 +56,7 @@ public class HeatmapView extends View {
         labelPaint.setTextSize(getResources().getDisplayMetrics().density * 9f);
         labelPaint.setTextAlign(Paint.Align.LEFT);
         gapSize = getResources().getDisplayMetrics().density * 1.2f;
-        padSize = getResources().getDisplayMetrics().density * 6f;
+        padSize = getResources().getDisplayMetrics().density * 9f;
         headerHeight = getResources().getDisplayMetrics().density * 12f;
     }
 

@@ -41,7 +41,8 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/gray"
                 android:textSize="16sp"
-                android:text="0 分" />
+                android:text="0 分"
+                android:visibility="gone" />
         </LinearLayout>
 
         <TextView

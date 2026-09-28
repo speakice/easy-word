@@ -41,9 +41,11 @@ public class WordViewModel extends AndroidViewModel {
         public final int[] batchPercent;
         /** 每一批已识的字数，下标 1~10。 */
         public final int[] batchKnown;
+        /** 每一批已学的字数，下标 1~10。 */
+        public final int[] batchLearned;
 
         Stats(int total, int learned, int known, int unknown, int currentBatch,
-              int[] batchPercent, int[] batchKnown) {
+              int[] batchPercent, int[] batchKnown, int[] batchLearned) {
             this.total = total;
             this.learned = learned;
             this.known = known;
@@ -51,6 +53,7 @@ public class WordViewModel extends AndroidViewModel {
             this.currentBatch = currentBatch;
             this.batchPercent = batchPercent;
             this.batchKnown = batchKnown;
+            this.batchLearned = batchLearned;
         }
 
         /** 某一批的学习进度（0~100）。 */
@@ -67,6 +70,14 @@ public class WordViewModel extends AndroidViewModel {
                 return 0;
             }
             return batchKnown[batch];
+        }
+
+        /** 某一批已学的字数。 */
+        public int learnedOfBatch(int batch) {
+            if (batchLearned == null || batch < 1 || batch >= batchLearned.length) {
+                return 0;
+            }
+            return batchLearned[batch];
         }
     }
 
@@ -135,15 +146,18 @@ public class WordViewModel extends AndroidViewModel {
             // 记录每一批的学习进度（识字率），考试解锁用
             int[] batchPercent = new int[11];
             int[] batchKnown = new int[11];
+            int[] batchLearned = new int[11];
             for (int b = 1; b <= 10; b++) {
                 int batchTotal = dao.countInBatch(b);
                 batchKnown[b] = dao.countKnownInBatch(b);
+                batchLearned[b] = dao.countLearnedInBatch(b);
+                // 学习进度 = 已学比例（考试解锁也用它）
                 batchPercent[b] = batchTotal == 0
-                        ? 0 : batchKnown[b] * 100 / batchTotal;
+                        ? 0 : batchLearned[b] * 100 / batchTotal;
             }
             stats.postValue(new Stats(dao.countWords(), dao.countLearned(),
                     dao.countKnown(), dao.countUnknown(), currentBatch,
-                    batchPercent, batchKnown));
+                    batchPercent, batchKnown, batchLearned));
         });
     }
 
@@ -163,8 +177,9 @@ public class WordViewModel extends AndroidViewModel {
             if (total == 0) {
                 break;
             }
-            int known = dao.countKnownInBatch(b);
-            if (known * 100 >= total * 80) {
+            // 按"已学"算批次进度：首页翻到这个字就算学过，不会卡住（已识要靠考试判定）
+            int learned = dao.countLearnedInBatch(b);
+            if (learned * 100 >= total * 80) {
                 cur = b + 1;
             } else {
                 break;

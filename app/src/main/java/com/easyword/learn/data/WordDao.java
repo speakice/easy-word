@@ -38,6 +38,9 @@ public interface WordDao {
     @Query("SELECT COUNT(*) FROM words WHERE batch = :batch AND is_known = 1 AND is_learned = 1")
     int countKnownInBatch(int batch);
 
+    @Query("SELECT COUNT(*) FROM words WHERE batch = :batch AND is_learned = 1")
+    int countLearnedInBatch(int batch);
+
     @Query("SELECT COUNT(*) FROM words WHERE batch = :batch")
     int countInBatch(int batch);
 

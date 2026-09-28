@@ -20,6 +20,7 @@ import com.easyword.learn.data.TestScores;
 import com.easyword.learn.data.Word;
 import com.easyword.learn.databinding.ActivityTestBinding;
 import com.easyword.learn.utils.TTSManager;
+import com.easyword.learn.utils.Settings;
 import com.easyword.learn.viewmodel.WordViewModel;
 
 import java.util.ArrayList;
@@ -187,9 +188,9 @@ public class TestActivity extends AppCompatActivity {
         binding.resultView.setVisibility(View.VISIBLE);
         binding.scoreStamp.setScore(score);
         binding.textResultDetail.setText(getString(R.string.test_result_detail,
-                correctCount, total, TestScores.comment(score)));
+                correctCount, total, Settings.comment(this, score)));
 
-        if (spec.diploma != null && score >= 60) {
+        if (spec.diploma != null && score >= Settings.passScore(this)) {
             binding.textDiploma.setVisibility(View.VISIBLE);
             binding.textDiploma.setText("🎓 " + spec.diploma + "！");
         } else {
@@ -199,13 +200,15 @@ public class TestActivity extends AppCompatActivity {
     }
 
     private String getAdvice(int score) {
-        if (score >= 90) {
+        int pass = Settings.passScore(this);
+        int good = Settings.goodScore(this);
+        if (score >= Settings.excellentScore(this)) {
             return "认得又准又牢！这些字可以放心了。";
         }
-        if (score >= 80) {
+        if (score >= good) {
             return "不错，把答错的那几个字多看两眼就更稳了。";
         }
-        if (score >= 60) {
+        if (score >= pass) {
             return "通过了。答错的字会回到首页，多练几次。";
         }
         return "别急，答错的字已经放回首页，听熟认熟再来考一次。";

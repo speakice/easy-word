@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.easyword.learn.adapter.TestListAdapter;
 import com.easyword.learn.data.TestCatalog;
 import com.easyword.learn.databinding.FragmentQuizBinding;
+import com.easyword.learn.utils.Settings;
 import com.easyword.learn.viewmodel.WordViewModel;
 
 /**
@@ -42,6 +43,8 @@ public class QuizFragment extends Fragment {
                 startActivity(TestActivity.intent(requireContext(), spec.id)));
         binding.testList.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.testList.setAdapter(adapter);
+        binding.textQuizHint.setText("不限次数，随时可以重考 · 学习进度到 "
+                + Settings.unlockPercent(requireContext()) + "% 解锁该年级考试");
 
         viewModel.getStats().observe(getViewLifecycleOwner(), stats -> {
             if (stats != null) {

@@ -7,6 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -19,14 +21,28 @@
             android:orientation="horizontal"
             android:padding="18dp">
 
-            <TextView
+            <FrameLayout
                 android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@drawable/bg_circle_gold"
-                android:gravity="center"
-                android:text="字"
-                android:textColor="@color/black"
-                android:textSize="32sp" />
+                android:layout_height="64dp">
+
+                <TextView
+                    android:id="@+id/textAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_circle_gold"
+                    android:gravity="center"
+                    android:text="字"
+                    android:textColor="@color/black"
+                    android:textSize="32sp" />
+
+                <ImageView
+                    android:id="@+id/imgAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/settings_avatar"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -36,9 +52,10 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/textNickname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="妈妈加油"
+                    android:text="我的学习"
                     android:textColor="@color/white"
                     android:textSize="21sp" />
 

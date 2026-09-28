@@ -57,6 +57,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.CertificatesActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

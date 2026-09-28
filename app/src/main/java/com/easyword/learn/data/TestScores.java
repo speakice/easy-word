@@ -83,17 +83,6 @@ public final class TestScores {
                 .apply();
     }
 
-    /** 毕业证上的用语：成绩优秀 / 成绩良好 / 成绩合格。 */
-    public static String gradeWord(int score) {
-        if (score >= 90) {
-            return "成绩优秀";
-        }
-        if (score >= 80) {
-            return "成绩良好";
-        }
-        return "成绩合格";
-    }
-
     // ---------- 逐次记录 ----------
 
     /** 一次考试记录。 */
@@ -225,20 +214,4 @@ public final class TestScores {
                 all.size(), Math.round(sum / (float) all.size()));
     }
 
-    /** 成绩评语（按小学常用的五级制简化）。 */
-    public static String comment(int score) {
-        if (score >= 90) {
-            return "优秀";
-        }
-        if (score >= 80) {
-            return "良好";
-        }
-        if (score >= 70) {
-            return "中等";
-        }
-        if (score >= 60) {
-            return "及格";
-        }
-        return "要加油";
-    }
 }

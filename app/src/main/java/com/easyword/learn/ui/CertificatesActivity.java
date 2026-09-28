@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.easyword.learn.data.TestScores;
+import com.easyword.learn.utils.Settings;
 import com.easyword.learn.databinding.ActivityCertificatesBinding;
 import com.easyword.learn.databinding.ItemCertificateBinding;
 
@@ -85,7 +86,7 @@ public class CertificatesActivity extends AppCompatActivity {
             int diplomaScore = recorded > 0 ? recorded : best;
             row.textCertTitle.setTextColor(0xFFFFD54F);
             row.textCertScore.setText(examName + " " + diplomaScore + " 分 · "
-                    + TestScores.gradeWord(diplomaScore));
+                    + Settings.gradeWord(this, diplomaScore));
             row.textCertScore.setTextColor(0xFFE53935);
             long issued = scores.issuedAt(testId);
             String when = issued > 0
@@ -108,13 +109,14 @@ public class CertificatesActivity extends AppCompatActivity {
         } else {
             // 成绩出来了但还没申请：显示成绩 + 申请按钮
             row.textCertTitle.setTextColor(0xFF9E9E9E);
-            row.textCertScore.setText(best >= 60
-                    ? examName + " " + best + " 分 · " + TestScores.gradeWord(best)
+            int pass = Settings.passScore(this);
+            row.textCertScore.setText(best >= pass
+                    ? examName + " " + best + " 分 · " + Settings.gradeWord(this, best)
                     : examName + " " + best + " 分");
-            row.textCertScore.setTextColor(best >= 60 ? 0xFFE53935 : 0xFF9E9E9E);
-            row.textCertDate.setText(best >= 60
+            row.textCertScore.setTextColor(best >= pass ? 0xFFE53935 : 0xFF9E9E9E);
+            row.textCertDate.setText(best >= pass
                     ? "成绩合格，点下面申请毕业证书"
-                    : "60 分以上才能申请毕业证书");
+                    : pass + " 分以上才能申请毕业证书");
             row.textCertSeal.setVisibility(View.GONE);
             row.btnApply.setVisibility(View.VISIBLE);
             row.btnApply.setOnClickListener(v -> apply(testId, title, best));
@@ -124,9 +126,10 @@ public class CertificatesActivity extends AppCompatActivity {
     }
 
     private void apply(String testId, String title, int best) {
-        if (best < 60) {
+        if (best < Settings.passScore(this)) {
             Toast.makeText(this, title.substring(0, 2) + "成绩 " + best
-                    + " 分，还没到 60 分，再考一次吧", Toast.LENGTH_LONG).show();
+                    + " 分，还没到 " + Settings.passScore(this) + " 分，再考一次吧",
+                    Toast.LENGTH_LONG).show();
             return;
         }
         scores.applyForDiploma(testId, best);

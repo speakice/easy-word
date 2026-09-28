@@ -26,6 +26,23 @@
     <string name="read_aloud">🔊 朗读全文</string>
     <string name="read_stop">停止</string>
 
+    <!-- 设置 -->
+    <string name="settings_title">设置</string>
+    <string name="settings_entry">设置</string>
+    <string name="settings_avatar">头像</string>
+    <string name="settings_avatar_hint">点这里从相册选一张图</string>
+    <string name="settings_nickname">昵称</string>
+    <string name="settings_nickname_hint">比如：我的学习</string>
+    <string name="settings_exam">考试设置</string>
+    <string name="settings_unlock">解锁进度（%）</string>
+    <string name="settings_pass">及格分数线</string>
+    <string name="settings_good">良好分数线</string>
+    <string name="settings_excellent">优秀分数线</string>
+    <string name="settings_exam_hint">解锁进度：本批字认到这个比例才解锁该年级考试。\n及格 / 良好 / 优秀：成绩评语和毕业证书用语按这三条线判定。</string>
+    <string name="settings_save">保存</string>
+    <string name="settings_saved">设置已保存</string>
+    <string name="settings_pick_failed">读取图片失败，换一张试试</string>
+
     <!-- 单元测试 / 期末考试 -->
     <string name="test_quit">退出</string>
     <string name="test_ask">这个字念什么？</string>
