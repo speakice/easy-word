@@ -2,6 +2,14 @@ plugins {
     id 'com.android.application'
 }
 
+// 正式包签名：keystore.properties 存在（本机发布用）就签名，不存在则退回 debug 签名，
+// 保证别人 clone 下来也能直接构建。
+def keystorePropsFile = rootProject.file('keystore.properties')
+def keystoreProps = new Properties()
+if (keystorePropsFile.exists()) {
+    keystoreProps.load(new FileInputStream(keystorePropsFile))
+}
+
 android {
     namespace 'com.easyword.learn'
     compileSdk 34
@@ -18,6 +26,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (keystorePropsFile.exists()) {
+                signingConfig signingConfigs.create('release') {
+                    storeFile rootProject.file(keystoreProps['storeFile'])
+                    storePassword keystoreProps['storePassword']
+                    keyAlias keystoreProps['keyAlias']
+                    keyPassword keystoreProps['keyPassword']
+                }
+            } else {
+                signingConfig signingConfigs.debug
+            }
         }
     }
 
@@ -28,6 +46,14 @@ android {
 
     buildFeatures {
         viewBinding true
+    }
+
+    // 打正式包时跳过 lint 检查：本机 Android Studio 自带的是 JDK 25，
+    // 而 AGP 8.7 捆绑的 lint 还不支持 JDK 25（会报 lintVitalAnalyzeRelease 失败）。
+    // 想跑 lint 的话，用 JDK 17 执行 ./gradlew :app:lintDebug 即可。
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
     }
 }
 

@@ -1,5 +1,9 @@
 *.iml
 *.apk
+*.aab
+*.jks
+*.keystore
+keystore.properties
 .gradle/
 .idea/
 .DS_Store

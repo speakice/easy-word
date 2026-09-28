@@ -12,6 +12,18 @@
 
 ---
 
+## 下载安装
+
+不用自己编译，直接下 APK 装到手机上（Android 7.0 及以上）：
+
+**[⬇️ 下载最新版 APK](https://github.com/speakice/easy-word/releases/latest)**
+
+安装时如果系统提示"未知来源"，在弹窗里允许一次即可。装好打开就能用，全程离线。
+
+<sub>也可以直接下这个版本：[EasyWord-v1.0.apk](https://github.com/speakice/easy-word/releases/download/v1.0/EasyWord-v1.0.apk)（5.6 MB）</sub>
+
+---
+
 ## 这是什么
 
 家里老人想认字，市面上的识字 App 大多面向小孩：字小、按钮小、操作复杂、还带各种弹窗。
@@ -83,6 +95,26 @@ cd easy-word
 ```
 
 或直接用 Android Studio 打开工程，点 Run。最低支持 Android 7.0（API 24）。
+
+打正式包（发布用，需要签名）：
+
+```bash
+# 1) 准备签名文件（首次）
+keytool -genkeypair -v -keystore keystore/easyword.jks -alias easyword \
+        -keyalg RSA -keysize 2048 -validity 10000
+# 2) 在项目根目录建 keystore.properties（不进版本库）
+#    storeFile=keystore/easyword.jks
+#    storePassword=…
+#    keyAlias=easyword
+#    keyPassword=…
+# 3) 打包
+./gradlew :app:assembleRelease
+# 产物：app/build/outputs/apk/release/app-release.apk
+```
+
+没有 `keystore.properties` 时会自动退回 debug 签名，保证 clone 下来就能构建。
+另外：本机若只有 JDK 25（Android Studio 自带的 JBR），AGP 8.7 的 lint 会失败，
+已在 `app/build.gradle` 里关掉 release 的 lint 检查；想跑 lint 请用 JDK 17。
 
 ## 内容与数据来源
 
