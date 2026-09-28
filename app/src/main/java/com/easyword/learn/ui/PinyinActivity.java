@@ -23,6 +23,9 @@ public class PinyinActivity extends AppCompatActivity {
     private ActivityPinyinBinding binding;
     private TTSManager tts;
 
+    /** 一行的格数：格子留大一点，看着不挤。 */
+    private static final int COLUMNS = 4;
+
     public static Intent intent(Context context) {
         return new Intent(context, PinyinActivity.class);
     }
@@ -36,8 +39,17 @@ public class PinyinActivity extends AppCompatActivity {
         binding.bar.textBarTitle.setText(R.string.pinyin_title);
         tts = TTSManager.getInstance(this);
 
-        fill(binding.initialBox, PinyinHelper.INITIALS, PinyinHelper.INITIAL_SOUNDS, 5);
-        fill(binding.finalBox, PinyinHelper.FINALS, PinyinHelper.FINAL_SOUNDS, 5);
+        fill(binding.initialBox, PinyinHelper.INITIALS, PinyinHelper.INITIAL_SOUNDS, COLUMNS);
+        fill(binding.finalBox, PinyinHelper.FINALS, PinyinHelper.FINAL_SOUNDS, COLUMNS);
+    }
+
+    /** 格子等分一行并留出四周间距（setLayoutParams 会丢掉 XML 里的 margin，得在这里补）。 */
+    private LinearLayout.LayoutParams tileParams() {
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+        int gap = Math.round(getResources().getDisplayMetrics().density * 6f);
+        lp.setMargins(gap, gap, gap, gap);
+        return lp;
     }
 
     /** 按列数铺成网格，每块显示字母 + 读音，点一下读出来。 */
@@ -59,9 +71,7 @@ public class PinyinActivity extends AppCompatActivity {
             tile.textTileSub.setText(sounds[i]);
             final String say = sounds[i];
             tile.getRoot().setOnClickListener(v -> tts.speak(say));
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-            tile.getRoot().setLayoutParams(lp);
+            tile.getRoot().setLayoutParams(tileParams());
             row.addView(tile.getRoot());
         }
         // 补齐最后一行，让每格宽度一致
@@ -69,8 +79,7 @@ public class PinyinActivity extends AppCompatActivity {
             int missing = (columns - items.length % columns) % columns;
             for (int i = 0; i < missing; i++) {
                 View spacer = new View(this);
-                spacer.setLayoutParams(new LinearLayout.LayoutParams(
-                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+                spacer.setLayoutParams(tileParams());
                 row.addView(spacer);
             }
         }

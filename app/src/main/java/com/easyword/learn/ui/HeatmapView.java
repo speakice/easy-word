@@ -17,19 +17,21 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * 学习热力图：白底卡片，一格一天，只画指定的半年区间（1~6 月或 7~12 月）。
+ * 学习热力图：黑底，一格一天，只画指定的半年区间（1~6 月或 7~12 月）。
  *
  * <p>列 = 周（从左到右按时间推进），行 = 星期（周一在最上面，周日最下面），
- * 所以每一列竖着看就是一周。绿色越深表示那天学得越久，没学是浅灰。
+ * 所以每一列竖着看就是一周。绿色越亮表示那天学得越久，没学是深灰。
  * 上方月份标签跟着区间自动变化。</p>
  */
 public class HeatmapView extends View {
 
     /** 学习时长对应的绿色深浅（分钟）。 */
     private static final long[] THRESHOLDS_MS = {60_000L, 5 * 60_000L, 15 * 60_000L, 30 * 60_000L};
-    private static final int[] GREEN = {0xFFC8E6C9, 0xFF81C784, 0xFF4CAF50, 0xFF2E7D32};
-    private static final int EMPTY = 0xFFE8E8E8;
-    private static final int FUTURE = 0xFFF4F4F4;
+    /** 学得越久绿色越亮（黑底上才看得清）。 */
+    private static final int[] GREEN = {0xFF2E7D32, 0xFF43A047, 0xFF66BB6A, 0xFFA5D6A7};
+    private static final int EMPTY = 0xFF333333;
+    private static final int FUTURE = 0xFF1F1F1F;
+    private static final int TODAY_RING = 0xFFE0E0E0;
 
     private final Map<String, Long> dailyMillis = new HashMap<>();
     private final Paint cardPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -51,7 +53,8 @@ public class HeatmapView extends View {
 
     public HeatmapView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        cardPaint.setColor(0xFFFFFFFF);
+        // 跟页面同为黑色，不再用白底卡片
+        cardPaint.setColor(0x00000000);
         labelPaint.setColor(0xFF999999);
         labelPaint.setTextSize(getResources().getDisplayMetrics().density * 9f);
         labelPaint.setTextAlign(Paint.Align.LEFT);
@@ -181,7 +184,7 @@ public class HeatmapView extends View {
                 if (key.equals(todayKey)) {
                     cellPaint.setStyle(Paint.Style.STROKE);
                     cellPaint.setStrokeWidth(dp(1.2f));
-                    cellPaint.setColor(0xFF2E7D32);
+                    cellPaint.setColor(TODAY_RING);
                     canvas.drawRoundRect(left, top, left + cell, top + cell,
                             cell * 0.25f, cell * 0.25f, cellPaint);
                     cellPaint.setStyle(Paint.Style.FILL);

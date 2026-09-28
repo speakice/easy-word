@@ -101,13 +101,13 @@
                 android:textSize="18sp" />
         </LinearLayout>
 
-        <!-- 学习热力图：整年铺满一行，不滚动、不带外框 -->
+        <!-- 学习热力图：半年铺满一行，不滚动、黑底、不带外框 -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:gravity="center"
-            android:text="学习热力图（绿色越深，那天学得越久）"
+            android:text="学习热力图（绿色越亮，那天学得越久）"
             android:textColor="@color/gray"
             android:textSize="13sp" />
 

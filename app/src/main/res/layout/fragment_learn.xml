@@ -26,10 +26,13 @@
         android:id="@+id/textBatchHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="start"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:paddingTop="14dp"
         android:textColor="@color/yellow"
-        android:textSize="16sp"
+        android:textSize="18sp"
+        android:textStyle="bold"
         android:text="一年级" />
 
 </FrameLayout>

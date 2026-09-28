@@ -11,18 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="阅读短文 · 点一条可整篇朗读给你听"
+        android:text="阅读短文"
         android:textColor="@color/white"
-        android:textSize="18sp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:gravity="center"
-        android:text="契合度越高，需要新认的字越少"
-        android:textColor="@color/gray"
-        android:textSize="13sp" />
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <ListView
         android:id="@+id/readingList"

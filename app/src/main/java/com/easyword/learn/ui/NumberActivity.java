@@ -50,7 +50,7 @@ public class NumberActivity extends AppCompatActivity {
         for (int i = 2; i <= 10; i++) {
             integers.add(String.valueOf(i * 1000));
         }
-        fill(binding.integerBox, integers, 5);
+        fill(binding.integerBox, integers, 4);
 
         // 小数：1.1 ~ 1.9、2.0
         List<String> decimals = new ArrayList<>();
@@ -58,7 +58,7 @@ public class NumberActivity extends AppCompatActivity {
             decimals.add("1." + i);
         }
         decimals.add("2.0");
-        fill(binding.decimalBox, decimals, 5);
+        fill(binding.decimalBox, decimals, 4);
 
         // 99 加法表 / 99 乘法表
         List<String> adds = new ArrayList<>();
@@ -81,6 +81,15 @@ public class NumberActivity extends AppCompatActivity {
         fillWithSay(box, items, items, columns);
     }
 
+    /** 格子等分一行并留出四周间距（setLayoutParams 会丢掉 XML 里的 margin，得在这里补）。 */
+    private LinearLayout.LayoutParams tileParams() {
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+        int gap = Math.round(getResources().getDisplayMetrics().density * 6f);
+        lp.setMargins(gap, gap, gap, gap);
+        return lp;
+    }
+
     /** 铺成网格；显示的文本和朗读的文本可以不同（算式要把 + × 读成汉字）。 */
     private void fillWithSay(LinearLayout box, List<String> items, List<String> say,
                              int columns) {
@@ -99,18 +108,17 @@ public class NumberActivity extends AppCompatActivity {
                     LayoutInflater.from(this), row, false);
             tile.textTileMain.setText(items.get(i));
             tile.textTileSub.setText("");
+            tile.textTileSub.setVisibility(View.GONE);
             final String spoken = say.get(i);
             tile.getRoot().setOnClickListener(v -> tts.speak(spoken));
-            tile.getRoot().setLayoutParams(new LinearLayout.LayoutParams(
-                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+            tile.getRoot().setLayoutParams(tileParams());
             row.addView(tile.getRoot());
         }
         if (row != null) {
             int missing = (columns - items.size() % columns) % columns;
             for (int i = 0; i < missing; i++) {
                 View spacer = new View(this);
-                spacer.setLayoutParams(new LinearLayout.LayoutParams(
-                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+                spacer.setLayoutParams(tileParams());
                 row.addView(spacer);
             }
         }

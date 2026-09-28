@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- 顶部：拼音居中，范字喇叭挪到右上角，让范字可以完全居中 -->
+        <!-- 顶部：拼音居中（喇叭放在范字右下角，见下面的范字区） -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,20 +25,6 @@
                 android:textColor="@color/gray"
                 android:textSize="34sp"
                 android:text="jiā" />
-
-            <Button
-                android:id="@+id/btnPlayWord"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_gravity="top|end"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="18dp"
-                android:background="@drawable/bg_semi_black"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:text="@string/btn_speak"
-                android:textColor="@color/yellow"
-                android:textSize="15sp" />
         </FrameLayout>
 
         <!-- 范字区：范字与描红覆盖层同一区域，左右居中 -->
@@ -64,6 +50,21 @@
                 android:id="@+id/strokeView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
+            <!-- 范字的喇叭：放在范字右下角；写在描红层后面才能点在它上面 -->
+            <Button
+                android:id="@+id/btnPlayWord"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/bg_semi_black"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:text="@string/btn_speak"
+                android:textColor="@color/yellow"
+                android:textSize="15sp" />
         </FrameLayout>
 
         <!-- 练写格里自己撑成正方形并居中；擦除按钮放在格子右边 -->
