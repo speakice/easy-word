@@ -41,6 +41,7 @@
                 android:maxLines="1"
                 android:textColor="@color/white"
                 android:text="家"
+                android:translationY="12dp"
                 app:autoSizeTextType="uniform"
                 app:autoSizeMinTextSize="96sp"
                 app:autoSizeMaxTextSize="220sp"
@@ -49,7 +50,8 @@
             <com.easyword.learn.view.StrokeAnimationView
                 android:id="@+id/strokeView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:translationY="12dp" />
 
             <!-- 范字的喇叭：放在范字右侧、垂直居中；写在描红层后面才能点在它上面 -->
             <Button
@@ -63,7 +65,8 @@
                 android:minHeight="0dp"
                 android:text="@string/btn_speak"
                 android:textColor="@color/yellow"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:translationY="12dp" />
         </FrameLayout>
 
         <!--
@@ -211,6 +214,16 @@
                     android:text="家人的爱，家家都有。" />
             </LinearLayout>
         </LinearLayout>
+
+        <!--
+          底部留白：把多余的竖向空间分一点到这里。
+          范字区是权重块（多余空间默认全给它，范字和练写格之间就会显得空），
+          加上这块之后范字会往上收一点、离练写格更近，「场景」那行也不会贴着底部标签栏。
+        -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.15" />
     </LinearLayout>
 
     <!-- 飘心动画 -->
