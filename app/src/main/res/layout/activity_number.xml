@@ -28,14 +28,12 @@
                 android:textColor="@color/gray"
                 android:textSize="13sp" />
 
-            <TextView
+            <include
+                android:id="@+id/headerInteger"
+                layout="@layout/section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:layout_marginStart="4dp"
-                android:text="@string/number_integer"
-                android:textColor="@color/yellow"
-                android:textSize="16sp" />
+                android:layout_marginTop="14dp" />
 
             <LinearLayout
                 android:id="@+id/integerBox"
@@ -43,14 +41,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <TextView
+            <include
+                android:id="@+id/headerDecimal"
+                layout="@layout/section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="4dp"
-                android:text="@string/number_decimal"
-                android:textColor="@color/yellow"
-                android:textSize="16sp" />
+                android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:id="@+id/decimalBox"
@@ -58,14 +54,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <TextView
+            <include
+                android:id="@+id/headerAdd"
+                layout="@layout/section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="4dp"
-                android:text="@string/number_add"
-                android:textColor="@color/yellow"
-                android:textSize="16sp" />
+                android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:id="@+id/addBox"
@@ -73,14 +67,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <TextView
+            <include
+                android:id="@+id/headerMultiply"
+                layout="@layout/section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="4dp"
-                android:text="@string/number_multiply"
-                android:textColor="@color/yellow"
-                android:textSize="16sp" />
+                android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:id="@+id/multiplyBox"

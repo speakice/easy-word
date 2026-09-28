@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 二级分类标题 + 自动朗读按钮（汉语拼音 / 数字共用） -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="4dp">
+
+    <TextView
+        android:id="@+id/textSectionTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/yellow"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btnSectionSpeak"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_semi_black"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:text="@string/btn_speak"
+        android:textColor="@color/yellow"
+        android:textSize="16sp" />
+</LinearLayout>

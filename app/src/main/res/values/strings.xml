@@ -56,13 +56,13 @@
     <string name="extend_number">数字</string>
     <string name="extend_group">扩展学习</string>
     <string name="pinyin_title">汉语拼音</string>
-    <string name="pinyin_hint">点一下就能听读音：声母和韵母分开练</string>
+    <string name="pinyin_hint">点格子就能听读音；点标题右边的喇叭会从头自动读一遍</string>
     <string name="pinyin_initials">声母（23 个）</string>
     <string name="pinyin_finals">韵母（24 个）</string>
     <string name="number_title">数字</string>
-    <string name="number_hint">点一下就能听读音；算式也能听，用来练口算</string>
-    <string name="number_integer">整数（1~100、整百、整千）</string>
-    <string name="number_decimal">小数（1.1~2.0）</string>
+    <string name="number_hint">点一下就能听读音；点标题右边的喇叭会从头自动读一遍</string>
+    <string name="number_integer">整数（0~100、101~110、整百、1001~1010、1100、1101、整千）</string>
+    <string name="number_decimal">小数（1.0~2.0）</string>
     <string name="number_add">99 加法表</string>
     <string name="number_multiply">99 乘法表</string>
 

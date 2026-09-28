@@ -28,14 +28,12 @@
                 android:textColor="@color/gray"
                 android:textSize="13sp" />
 
-            <TextView
+            <include
+                android:id="@+id/headerInitials"
+                layout="@layout/section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:layout_marginStart="4dp"
-                android:text="@string/pinyin_initials"
-                android:textColor="@color/yellow"
-                android:textSize="16sp" />
+                android:layout_marginTop="14dp" />
 
             <LinearLayout
                 android:id="@+id/initialBox"
@@ -43,14 +41,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <TextView
+            <include
+                android:id="@+id/headerFinals"
+                layout="@layout/section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="4dp"
-                android:text="@string/pinyin_finals"
-                android:textColor="@color/yellow"
-                android:textSize="16sp" />
+                android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:id="@+id/finalBox"

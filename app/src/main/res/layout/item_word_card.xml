@@ -51,14 +51,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <!-- 范字的喇叭：放在范字右下角；写在描红层后面才能点在它上面 -->
+            <!-- 范字的喇叭：放在范字右侧、垂直居中；写在描红层后面才能点在它上面 -->
             <Button
                 android:id="@+id/btnPlayWord"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_gravity="bottom|end"
+                android:layout_gravity="center_vertical|end"
                 android:layout_marginEnd="18dp"
-                android:layout_marginBottom="6dp"
                 android:background="@drawable/bg_semi_black"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
