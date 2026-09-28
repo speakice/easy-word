@@ -116,8 +116,9 @@ public class DrawingView extends View {
     }
 
     /**
-     * 练写格永远保持正方形（边长取宽高里较小的一边），父容器会把它居中。
-     * 这样田字格看上去是“方正”的，而不是一条扁长的横条。
+     * 练写格永远保持正方形。边长取宽高里较小的一边，而宽度由布局给定
+     * （一行里左边存图、右边擦除，中间这一格等分剩下的宽度），所以每张卡片的
+     * 格子大小一样，和两边按钮的间距也就固定了，不会因为下面文字行数变化而忽宽忽窄。
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
