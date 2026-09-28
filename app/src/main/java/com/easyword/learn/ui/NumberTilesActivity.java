@@ -22,19 +22,20 @@ import java.util.List;
 
 /**
  * 数字子页：整数（0~100、101~110、整百、1001~1010、1100/1101、整千）、
- * 小数（1.0~2.0）、99 加法表和乘法表。
+ * 小数（1.0~2.0）、99 加法表、99 乘法表。
  *
- * <p>格子点一下读一个；分类标题右边的喇叭会把这一分类从头读一遍，
+ * <p>格子点一下读一个；标题右边的喇叭会把这一页从头读一遍，
  * 读到哪一格哪一格套上黄色边框。</p>
  */
 public class NumberTilesActivity extends AppCompatActivity {
 
     private static final String EXTRA_KEY = "number_key";
 
-    /** 二级菜单的三个入口。 */
+    /** 二级菜单的四个入口。 */
     public static final String KEY_INTEGER = "integer";
     public static final String KEY_DECIMAL = "decimal";
-    public static final String KEY_CALC = "calc";
+    public static final String KEY_ADD = "add";
+    public static final String KEY_MULTIPLY = "multiply";
 
     private ActivityTilesBinding binding;
     private TTSManager tts;
@@ -60,10 +61,12 @@ public class NumberTilesActivity extends AppCompatActivity {
         if (KEY_DECIMAL.equals(key)) {
             binding.bar.textBarTitle.setText(R.string.number_decimal);
             addNumberSection(R.string.number_section_decimal, decimals(), 4);
-        } else if (KEY_CALC.equals(key)) {
-            binding.bar.textBarTitle.setText(R.string.number_calc);
-            addFormulaSection(R.string.number_add, false);
-            addFormulaSection(R.string.number_multiply, true);
+        } else if (KEY_ADD.equals(key)) {
+            binding.bar.textBarTitle.setText(R.string.number_add);
+            addFormulaSection(R.string.number_section_add, false);
+        } else if (KEY_MULTIPLY.equals(key)) {
+            binding.bar.textBarTitle.setText(R.string.number_multiply);
+            addFormulaSection(R.string.number_section_multiply, true);
         } else {
             binding.bar.textBarTitle.setText(R.string.number_integer);
             addNumberSection(R.string.number_section_integer, integers(), 4);
@@ -113,7 +116,7 @@ public class NumberTilesActivity extends AppCompatActivity {
         addSection(getString(titleRes), items, says, columns);
     }
 
-    /** 算式分类：99 加法表 / 99 乘法表，算式里的 + × 读成「加 / 乘」。 */
+    /** 99 加法表 / 99 乘法表：算式里的 + × 读成「加 / 乘」。 */
     private void addFormulaSection(int titleRes, boolean multiply) {
         List<String> items = new ArrayList<>();
         List<String> says = new ArrayList<>();

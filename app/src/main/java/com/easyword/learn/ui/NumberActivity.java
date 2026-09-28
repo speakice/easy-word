@@ -35,8 +35,10 @@ public class NumberActivity extends AppCompatActivity {
                 getString(R.string.number_menu_integer_value), NumberTilesActivity.KEY_INTEGER);
         addRow("1.0", getString(R.string.number_decimal),
                 getString(R.string.number_menu_decimal_value), NumberTilesActivity.KEY_DECIMAL);
-        addRow("＋×", getString(R.string.number_calc),
-                getString(R.string.number_menu_calc_value), NumberTilesActivity.KEY_CALC);
+        addRow("＋", getString(R.string.number_add),
+                getString(R.string.number_menu_add_value), NumberTilesActivity.KEY_ADD);
+        addRow("×", getString(R.string.number_multiply),
+                getString(R.string.number_menu_multiply_value), NumberTilesActivity.KEY_MULTIPLY);
     }
 
     private void addRow(String icon, String title, String value, String key) {
