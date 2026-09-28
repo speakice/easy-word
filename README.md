@@ -123,7 +123,7 @@ app/src/main/java/com/easyword/learn/
 - ✅ 个人学习、家庭教育、课堂与公益教学等**非商业**用途：免费使用、修改、分发（须保留版权声明与许可）
 - ❌ 任何**商业用途**（销售、内置到付费产品、商业培训、SaaS、广告变现等）：**必须事先取得著作权人书面授权**
 
-详见 [LICENSE](LICENSE)。商业授权请联系仓库 Issue 或 `lijie@jcsk100.com`。
+详见 [LICENSE](LICENSE)。商业授权请联系仓库 Issue 或 `907203644@qq.com`。
 
 ---
 

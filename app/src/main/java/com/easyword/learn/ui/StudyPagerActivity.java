@@ -154,6 +154,11 @@ public class StudyPagerActivity extends AppCompatActivity implements WordPagerAd
     }
 
     @Override
+    public void onSaveDrawing(android.view.View drawingView, Word word) {
+        com.easyword.learn.utils.WritingExporter.save(this, drawingView, word.getWord());
+    }
+
+    @Override
     public void onSpeak(String text) {
         tts.speak(text);
     }

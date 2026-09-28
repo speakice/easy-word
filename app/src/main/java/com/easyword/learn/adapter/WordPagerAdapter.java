@@ -54,6 +54,9 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
         /** 右滑/清空按钮：擦除笔迹。 */
         void onClearStroke(Word word);
 
+        /** 保存按钮：把手写内容存成图片。 */
+        void onSaveDrawing(android.view.View drawingView, Word word);
+
         /** 播放按钮：朗读一段文本（字 / 词组 / 顺口溜 / 场景）。 */
         void onSpeak(String text);
     }
@@ -337,6 +340,12 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
         binding.btnClear.setOnClickListener(v -> {
             binding.drawingView.clear();
             clearStrokeAt(holder);
+        });
+        binding.btnSave.setOnClickListener(v -> {
+            Word word = wordOf(holder);
+            if (word != null) {
+                cardListener.onSaveDrawing(binding.drawingView, word);
+            }
         });
 
         binding.btnPlayWord.setOnClickListener(v ->

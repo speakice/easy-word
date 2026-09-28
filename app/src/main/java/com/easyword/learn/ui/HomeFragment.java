@@ -116,8 +116,9 @@ public class HomeFragment extends Fragment implements WordPagerAdapter.CardListe
         if (stats == null) {
             return;
         }
-        binding.textBatchHeader.setText("第 " + stats.currentBatch + " 批 · 识字 "
-                + stats.known + " · 已学 " + stats.learned);
+        // 顶部只显示当前学到的最高年级
+        binding.textBatchHeader.setText(
+                com.easyword.learn.data.TestCatalog.batchName(stats.currentBatch));
     }
 
     @Override
@@ -198,6 +199,12 @@ public class HomeFragment extends Fragment implements WordPagerAdapter.CardListe
     @Override
     public void onClearStroke(Word word) {
         VibrateUtil.vibrate(requireContext(), 20);
+    }
+
+    @Override
+    public void onSaveDrawing(android.view.View drawingView, Word word) {
+        com.easyword.learn.utils.WritingExporter.save(
+                requireActivity(), drawingView, word.getWord());
     }
 
     @Override

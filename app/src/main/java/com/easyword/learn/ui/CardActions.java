@@ -42,6 +42,14 @@ public class CardActions implements WordPagerAdapter.CardListener {
     }
 
     @Override
+    public void onSaveDrawing(android.view.View drawingView, Word word) {
+        if (context instanceof android.app.Activity) {
+            com.easyword.learn.utils.WritingExporter.save(
+                    (android.app.Activity) context, drawingView, word.getWord());
+        }
+    }
+
+    @Override
     public void onSpeak(String text) {
         if (text == null || text.trim().isEmpty()) {
             return;

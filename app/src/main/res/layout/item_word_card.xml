@@ -83,19 +83,39 @@
                 android:layout_marginEnd="18dp"
                 android:background="@drawable/bg_draw_strip" />
 
-            <ImageButton
-                android:id="@+id/btnClear"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+            <!-- 练写区右侧：保存成图片 / 擦除，两个小圆按钮 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginEnd="6dp"
-                android:background="@drawable/bg_semi_black"
-                android:contentDescription="@string/clear_stroke"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:padding="9dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_broom" />
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/btnSave"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="@drawable/bg_round_button"
+                    android:contentDescription="@string/save_drawing"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:padding="9dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_save_image" />
+
+                <ImageButton
+                    android:id="@+id/btnClear"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_round_button"
+                    android:contentDescription="@string/clear_stroke"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:padding="9dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_broom" />
+            </LinearLayout>
         </FrameLayout>
 
         <!-- 底部知识面板：词组 → 巧记 → 场景，三行同字号 -->

@@ -63,8 +63,8 @@ public class ProfileFragment extends Fragment {
                 () -> openList(WordViewModel.TYPE_LEARNED, "已学字表"));
         knownValue = addRow(binding.rowBoxLists, "✅", "已识字表", "",
                 () -> openList(WordViewModel.TYPE_KNOWN, "已识字表"));
-        unknownValue = addRow(binding.rowBoxLists, "❓", "未识字表", "",
-                () -> openList(WordViewModel.TYPE_UNKNOWN, "未识字表"));
+        unknownValue = addRow(binding.rowBoxLists, "❓", "错字集", "",
+                () -> openList(WordViewModel.TYPE_UNKNOWN, "错字集"));
         favoriteValue = addRow(binding.rowBoxLists, "⭐", "已收藏字表", "",
                 () -> openList(WordViewModel.TYPE_FAVORITE, "已收藏字表"));
 

@@ -12,6 +12,7 @@
     <!-- 主页面卡片提示 -->
     <string name="card_hint">👆 点击朗读 · ❤️ 双击收藏</string>
     <string name="clear_stroke">✎ 擦除</string>
+    <string name="save_drawing">保存成图片</string>
     <string name="favorite_book">📖 收藏本</string>
 
     <!-- 收藏页面 -->
