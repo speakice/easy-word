@@ -61,8 +61,14 @@
     <string name="pinyin_finals">韵母（24 个）</string>
     <string name="number_title">数字</string>
     <string name="number_hint">点一下就能听读音；点标题右边的喇叭会从头自动读一遍</string>
-    <string name="number_integer">整数（0~100、101~110、整百、1001~1010、1100、1101、整千）</string>
-    <string name="number_decimal">小数（1.0~2.0）</string>
+    <string name="number_integer">整数</string>
+    <string name="number_decimal">小数</string>
+    <string name="number_calc">计算</string>
+    <string name="number_section_integer">0~100 · 101~110 · 整百 · 1001~1010 · 1100、1101 · 整千</string>
+    <string name="number_section_decimal">1.0 ~ 2.0</string>
+    <string name="number_menu_integer_value">0~100、101~110、整百、整千</string>
+    <string name="number_menu_decimal_value">1.0 ~ 2.0</string>
+    <string name="number_menu_calc_value">99 加法表 · 99 乘法表</string>
     <string name="number_add">99 加法表</string>
     <string name="number_multiply">99 乘法表</string>
 

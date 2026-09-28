@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 数字二级菜单：整数 / 小数 / 计算 -->
+<!-- 数字子页（整数 / 小数 / 计算）：标题 + 若干「分类 + 点读格子」 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,16 +10,26 @@
         android:id="@+id/bar"
         layout="@layout/bar_with_title" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:text="@string/number_hint"
+        android:textColor="@color/gray"
+        android:textSize="13sp" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
         <LinearLayout
-            android:id="@+id/rowBox"
+            android:id="@+id/sectionBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp" />
+            android:padding="12dp" />
     </ScrollView>
 </LinearLayout>
