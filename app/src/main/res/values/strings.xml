@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">轻松识字</string>
+    <string name="slogan">一笔一划，快乐识字</string>
+    <string name="tab_learn">识字</string>
+    <string name="tab_quiz">测验</string>
+    <string name="tab_read">阅读</string>
+    <string name="tab_me">我的</string>
+    <string name="btn_speak">🔊</string>
+    <string name="btn_clear">✎ 擦除</string>
+
+    <!-- 主页面卡片提示 -->
+    <string name="card_hint">👆 点击朗读 · ❤️ 双击收藏</string>
+    <string name="clear_stroke">✎ 擦除</string>
+    <string name="favorite_book">📖 收藏本</string>
+
+    <!-- 收藏页面 -->
+    <string name="favorite_title">📖 收藏本</string>
+    <string name="favorite_back">返回</string>
+    <string name="favorite_empty">还没有收藏，回到首页双击卡片即可收藏</string>
+    <string name="favorite_click_hint">点击进入学习 · 长按取消收藏</string>
+
+    <!-- 提示语 -->
+    <string name="library_loading">字库准备中…</string>
+    <string name="read_aloud">🔊 朗读全文</string>
+    <string name="read_stop">停止</string>
+
+    <!-- 单元测试 / 期末考试 -->
+    <string name="test_quit">退出</string>
+    <string name="test_ask">这个字念什么？</string>
+    <string name="test_ask_listen">听发音，选出这个字</string>
+    <string name="test_replay">没听清就点大喇叭再听一遍</string>
+    <string name="test_correct">答对了！</string>
+    <string name="test_wrong">这个字是「%1$s」</string>
+    <string name="test_again">再考一次</string>
+    <string name="test_back">返回</string>
+    <string name="test_locked">🔒 学到这里就能考</string>
+    <string name="test_not_taken">还没考过</string>
+    <string name="test_best">最好 %1$d 分</string>
+    <string name="test_title">考试</string>
+    <string name="test_progress">第 %1$d / %2$d 题</string>
+    <string name="test_score_now">%1$d 分</string>
+    <string name="test_result_detail">答对 %1$d / %2$d 题 · %3$s</string>
+    <string name="toast_favorited">❤️ 已加入收藏</string>
+    <string name="toast_unfavorited">已取消收藏</string>
+    <string name="toast_stroke_cleared">已擦除笔迹</string>
+    <string name="tts_not_ready">语音引擎尚未就绪，请稍后再试</string>
+    <string name="tts_lang_missing">缺少中文语音数据，请安装 TTS 语音包</string>
+</resources>

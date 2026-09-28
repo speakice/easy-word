@@ -1,0 +1,21 @@
+字库内容（组词 / 记字提示 / 场景例句）由下列开放数据生成，
+生成脚本见仓库 tools/build_library.py：
+
+1. CC-CEDICT
+   社区维护的汉英词典，用来确认词组是真实存在的词。
+   https://cc-cedict.org/wiki/    许可：CC BY-SA 4.0
+
+2. jieba 词典
+   词频与词性，用来排出常用词、剔除人名地名和术语。
+   https://github.com/fxsjy/jieba    许可：MIT
+
+3. Tatoeba 中文句子
+   场景例句来源。
+   https://tatoeba.org/    许可：CC BY 2.0 FR
+
+4. makemeahanzi
+   字形拆解、部首、笔画数，用来生成“记字”提示。
+   https://github.com/skishore/makemeahanzi
+
+重新生成：
+    python3 tools/build_library.py --data <开放数据目录>

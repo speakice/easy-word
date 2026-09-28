@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <!-- 竖向排布：拼音 → 范字 → 练写田字格 → 词组/巧记/场景 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- 顶部：拼音居中，范字喇叭挪到右上角，让范字可以完全居中 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="46dp">
+
+            <TextView
+                android:id="@+id/textPinyin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/gray"
+                android:textSize="34sp"
+                android:text="jiā" />
+
+            <Button
+                android:id="@+id/btnPlayWord"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="18dp"
+                android:background="@drawable/bg_semi_black"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:text="@string/btn_speak"
+                android:textColor="@color/yellow"
+                android:textSize="15sp" />
+        </FrameLayout>
+
+        <!-- 范字区：范字与描红覆盖层同一区域，左右居中 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/textWord"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textColor="@color/white"
+                android:text="家"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="96sp"
+                app:autoSizeMaxTextSize="220sp"
+                app:autoSizeStepGranularity="2sp" />
+
+            <com.easyword.learn.view.StrokeAnimationView
+                android:id="@+id/strokeView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+
+        <!-- 练写格里自己撑成正方形并居中；擦除按钮放在格子右边 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_weight="1.15">
+
+            <com.easyword.learn.view.DrawingView
+                android:id="@+id/drawingView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:background="@drawable/bg_draw_strip" />
+
+            <ImageButton
+                android:id="@+id/btnClear"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_semi_black"
+                android:contentDescription="@string/clear_stroke"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="9dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_broom" />
+        </FrameLayout>
+
+        <!-- 底部知识面板：词组 → 巧记 → 场景，三行同字号 -->
+        <LinearLayout
+            android:id="@+id/infoPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="14dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnPlayWords"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_semi_black"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="@string/btn_speak"
+                    android:textColor="@color/yellow"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/textWords"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#F2F2F2"
+                    android:textSize="20sp"
+                    android:text="家庭 · 家人 · 回家" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnPlayRhyme"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_semi_black"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="@string/btn_speak"
+                    android:textColor="@color/yellow"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/textRhyme"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#F2F2F2"
+                    android:textSize="20sp"
+                    android:text="左右结构，左边是「女」，右边是「子」" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnPlayUsage"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_semi_black"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="@string/btn_speak"
+                    android:textColor="@color/yellow"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/textUsage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#F2F2F2"
+                    android:textSize="20sp"
+                    android:text="家人的爱，家家都有。" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 飘心动画 -->
+    <TextView
+        android:id="@+id/heartOverlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="❤️"
+        android:textSize="140sp"
+        android:visibility="gone" />
+</FrameLayout>

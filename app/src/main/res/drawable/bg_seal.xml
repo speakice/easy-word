@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 证书上的红色印章底 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#1FE53935" />
+    <stroke
+        android:width="2dp"
+        android:color="#E53935" />
+</shape>

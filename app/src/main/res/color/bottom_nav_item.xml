@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 底部导航：选中变黄，未选中灰色，选中状态一眼就能看出来 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/yellow" android:state_checked="true" />
+    <item android:color="#9E9E9E" />
+</selector>

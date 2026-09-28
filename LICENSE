@@ -1,0 +1,71 @@
+轻松识字 EasyWord 授权协议
+EasyWord License (Non-Commercial Free, Commercial Requires Permission)
+版权所有 (C) 2026 李杰 / Copyright (C) 2026 Li Jie
+================================================================
+
+【中文】
+
+本软件（含源代码、字库内容、图形资源，以下称"本软件"）采用"非商业免费、商业需授权"
+的授权方式。使用本软件即表示你已阅读并同意以下条款：
+
+1. 非商业使用（免费）
+   任何非商业目的的使用，包括个人学习、家庭教育、课堂教学、公益教学、非营利研究等，
+   均被允许免费使用、复制、修改和再分发本软件及其源代码，但必须：
+   (a) 保留本版权声明与本授权协议；
+   (b) 在修改后的版本中明确说明修改内容。
+
+2. 商业使用（需授权）
+   任何以营利为目的的使用，包括但不限于：将本软件或其主要功能用于销售、付费产品、
+   商业培训、订阅服务（SaaS）、广告变现、预装于商业设备，或以本软件为基础提供收费
+   服务，都必须事先取得著作权人的书面授权。未获授权的商业使用一律禁止。
+
+3. 内容数据
+   本软件内置的字库内容由第三方开放数据生成（CC-CEDICT、Tatoeba、makemeahanzi、
+   hanzi-writer-data 等），这些数据各自遵循其原始许可（详见 README 与
+   app/src/main/assets/library/SOURCES.txt）。商业使用本软件时，你还需要自行遵守
+   这些数据的许可要求。
+
+4. 无担保
+   本软件按"现状"提供，不提供任何明示或默示的担保。因使用本软件造成的任何损失，
+   作者不承担责任。
+
+5. 其他
+   本协议未尽事宜，适用中华人民共和国法律。如需商业授权，请通过仓库 Issue 或
+   邮箱 lijie@jcsk100.com 联系。
+
+================================================================
+
+【English】
+
+This software (including source code, character library content and graphic assets,
+hereinafter "the Software") is licensed as "free for non-commercial use, commercial
+use requires permission". By using the Software you agree to the following terms:
+
+1. Non-Commercial Use (Free)
+   Any non-commercial use — personal study, family education, classroom teaching,
+   public-interest teaching, non-profit research — is permitted free of charge,
+   including the rights to use, copy, modify and redistribute the Software and its
+   source code, provided that you (a) keep this copyright notice and license, and
+   (b) clearly state your modifications in modified versions.
+
+2. Commercial Use (Requires Permission)
+   Any for-profit use — including but not limited to selling the Software or its core
+   functionality, bundling it into a paid product, commercial training, subscription
+   (SaaS) services, monetization through advertising, pre-installation on commercial
+   devices, or offering paid services based on the Software — requires prior written
+   permission from the copyright holder. Unauthorized commercial use is prohibited.
+
+3. Third-Party Data
+   The bundled character library is generated from third-party open data (CC-CEDICT,
+   Tatoeba, makemeahanzi, hanzi-writer-data). Those datasets remain under their own
+   licenses (see README and app/src/main/assets/library/SOURCES.txt). For commercial
+   use you must also comply with those licenses.
+
+4. No Warranty
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+   IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+   ARISING FROM THE USE OF THE SOFTWARE.
+
+5. Contact
+   For commercial licensing, please open an issue on the repository or email
+   lijie@jcsk100.com.

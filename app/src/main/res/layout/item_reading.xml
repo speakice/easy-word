@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 阅读列表条目：显式白字，避免依赖系统主题导致黑底黑字看不见 -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textReading"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="10dp"
+    android:paddingTop="18dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="18dp"
+    android:textColor="@color/white"
+    android:textSize="20sp"
+    android:text="我的家（契合 92%）" />

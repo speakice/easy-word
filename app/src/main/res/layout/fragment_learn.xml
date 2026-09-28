@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 数据未就绪时的占位 -->
+    <TextView
+        android:id="@+id/textEmptyHint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="40dp"
+        android:visibility="gone"
+        android:text="@string/library_loading"
+        android:textColor="@color/gray"
+        android:textSize="24sp" />
+
+    <!-- 顶部：批次与进度 -->
+    <TextView
+        android:id="@+id/textBatchHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="14dp"
+        android:textColor="@color/yellow"
+        android:textSize="16sp"
+        android:text="第 1 批 · 进度 0/100" />
+
+</FrameLayout>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <!-- ============ 答题页（听发音选字） ============ -->
+    <LinearLayout
+        android:id="@+id/quizView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnQuit"
+                style="@style/Widget.EasyWord.BackButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/test_quit" />
+
+            <TextView
+                android:id="@+id/textProgress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/yellow"
+                android:textSize="17sp"
+                android:text="第 1 / 10 题" />
+
+            <TextView
+                android:id="@+id/textScoreSoFar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray"
+                android:textSize="16sp"
+                android:text="0 分" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textAsk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:gravity="center"
+            android:text="@string/test_ask_listen"
+            android:textColor="@color/white"
+            android:textSize="21sp" />
+
+        <!-- 大喇叭：点一下再听一遍 -->
+        <Button
+            android:id="@+id/btnReplay"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_semi_black"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:text="@string/btn_speak"
+            android:textColor="@color/yellow"
+            android:textSize="62sp" />
+
+        <TextView
+            android:id="@+id/textReplayHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/test_replay"
+            android:textColor="@color/gray"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/textFeedback"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/yellow"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:id="@+id/optionBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+
+    <!-- ============ 结果页 ============ -->
+    <LinearLayout
+        android:id="@+id/resultView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textResultTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:text="一年级期末考试" />
+
+        <com.easyword.learn.ui.ScoreStampView
+            android:id="@+id/scoreStamp"
+            android:layout_width="200dp"
+            android:layout_height="160dp"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/textResultDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/yellow"
+            android:textSize="20sp"
+            android:text="答对 10 / 10 题 · 优秀" />
+
+        <TextView
+            android:id="@+id/textDiploma"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_semi_black"
+            android:gravity="center"
+            android:padding="18dp"
+            android:textColor="#FFEB3B"
+            android:textSize="22sp"
+            android:visibility="gone"
+            android:text="🎓 小学毕业" />
+
+        <TextView
+            android:id="@+id/textAdvice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:textColor="@color/gray"
+            android:textSize="16sp"
+            android:text="" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnAgain"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_semi_black"
+                android:text="@string/test_again"
+                android:textColor="@color/yellow"
+                android:textSize="19sp" />
+
+            <Button
+                android:id="@+id/btnBack"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_semi_black"
+                android:text="@string/test_back"
+                android:textColor="@color/white"
+                android:textSize="19sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
