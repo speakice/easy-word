@@ -7,8 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.easyword.learn.BaseActivity;
 import com.easyword.learn.data.TestScores;
 import com.easyword.learn.utils.Settings;
 import com.easyword.learn.databinding.ActivityCertificatesBinding;
@@ -23,7 +22,7 @@ import java.util.Locale;
  * 成绩 60 分以上申请成功 → 颁发小学 / 初中毕业证书；没到 60 分就申请不下来，
  * 证书区保持为空。还没考的科目不列出来。
  */
-public class CertificatesActivity extends AppCompatActivity {
+public class CertificatesActivity extends BaseActivity {
 
     private ActivityCertificatesBinding binding;
     private TestScores scores;

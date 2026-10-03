@@ -118,7 +118,7 @@
                 android:src="@drawable/ic_broom" />
         </LinearLayout>
 
-        <!-- 底部知识面板：词组 → 巧记 → 场景，三行同字号 -->
+        <!-- 底部知识面板：词组 → 场景（同字号）→ 巧记（小一号、灰色，弱化） -->
         <LinearLayout
             android:id="@+id/infoPanel"
             android:layout_width="match_parent"
@@ -164,35 +164,6 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btnPlayRhyme"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_semi_black"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:text="@string/btn_speak"
-                    android:textColor="@color/yellow"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/textRhyme"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#F2F2F2"
-                    android:textSize="20sp"
-                    android:text="左右结构，左边是「女」，右边是「子」" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <Button
                     android:id="@+id/btnPlayUsage"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -212,6 +183,36 @@
                     android:textColor="#F2F2F2"
                     android:textSize="20sp"
                     android:text="家人的爱，家家都有。" />
+            </LinearLayout>
+
+            <!-- 巧记排最后：字号小一点、颜色淡一点，明确它是补充信息 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnPlayRhyme"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_semi_black"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="@string/btn_speak"
+                    android:textColor="@color/yellow"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/textRhyme"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#9E9E9E"
+                    android:textSize="15sp"
+                    android:text="左右结构，左边是「女」，右边是「子」" />
             </LinearLayout>
         </LinearLayout>
 

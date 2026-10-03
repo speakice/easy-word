@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
@@ -23,7 +22,7 @@ import java.util.List;
  * <p>单击条目 → 连同字 ID 返回主页面并定位；长按 → 取消收藏。
  * 返回时通过 {@link #EXTRA_WORD_ID} 带回所选字主键。</p>
  */
-public class FavoriteActivity extends AppCompatActivity implements FavoriteWordAdapter.OnFavoriteWordAction {
+public class FavoriteActivity extends BaseActivity implements FavoriteWordAdapter.OnFavoriteWordAction {
 
     /** 返回给 MainActivity 的汉字主键。 */
     public static final String EXTRA_WORD_ID = "extra_word_id";

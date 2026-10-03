@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
@@ -16,7 +15,7 @@ import com.easyword.learn.utils.TTSManager;
 import com.easyword.learn.viewmodel.WordViewModel;
 
 /** 字表页（我的 → 已学/已识/未识/收藏）：网格列出字+喇叭；点字进入该字表的上下滑动学习页。 */
-public class WordListActivity extends AppCompatActivity implements WordListAdapter.OnListAction {
+public class WordListActivity extends BaseActivity implements WordListAdapter.OnListAction {
 
     private static final String EXTRA_TYPE = "list_type";
     private static final String EXTRA_TITLE = "list_title";

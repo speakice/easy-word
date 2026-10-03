@@ -24,6 +24,11 @@ public class SequenceSpeaker {
     private int token;
     private int playingId = -1;
 
+    /** 单格朗读的人工兜底时限：按字数估算，引擎不出声时也不让黄框一直亮着。 */
+    private static final long ONE_SHOT_BASE_MS = 2000L;
+    private static final long ONE_SHOT_PER_CHAR_MS = 400L;
+    private static final long ONE_SHOT_MAX_MS = 15000L;
+
     public SequenceSpeaker(TTSManager tts) {
         this.tts = tts;
     }
@@ -61,6 +66,44 @@ public class SequenceSpeaker {
         token++;
         clearHighlight();
         tts.stop();
+    }
+
+    /**
+     * 手动点某一格：只给这一格套上黄色边框，读完自动消失。
+     *
+     * @param tile 被点的小方块
+     * @param text 这一格要朗读的内容
+     */
+    public void speakOne(final View tile, String text) {
+        stop();
+        if (tile == null || text == null || text.trim().isEmpty()) {
+            return;
+        }
+        tile.setBackgroundResource(R.drawable.bg_tile_active);
+        final int t = ++token;
+        final Runnable clear = () -> {
+            if (t == token) {
+                tile.setBackgroundResource(R.drawable.bg_card);
+            }
+        };
+        long timeout = Math.min(ONE_SHOT_MAX_MS,
+                ONE_SHOT_BASE_MS + ONE_SHOT_PER_CHAR_MS * text.length());
+        handler.postDelayed(clear, timeout);
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, new UtteranceProgressListener() {
+            @Override
+            public void onStart(String utteranceId) {
+            }
+
+            @Override
+            public void onDone(String utteranceId) {
+                handler.post(clear);
+            }
+
+            @Override
+            public void onError(String utteranceId) {
+                handler.post(clear);
+            }
+        });
     }
 
     private void playNext(int index, final int t, int retry) {

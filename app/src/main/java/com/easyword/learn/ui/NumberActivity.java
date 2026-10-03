@@ -7,8 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.easyword.learn.BaseActivity;
 import com.easyword.learn.R;
 import com.easyword.learn.databinding.ActivityNumberBinding;
 
@@ -16,7 +15,7 @@ import com.easyword.learn.databinding.ActivityNumberBinding;
  * 数字的二级菜单：整数 / 小数 / 计算，点进去分别是各自的点读页。
  * 内容太多，摊在一页要滑很久，所以先选大类。
  */
-public class NumberActivity extends AppCompatActivity {
+public class NumberActivity extends BaseActivity {
 
     private ActivityNumberBinding binding;
 

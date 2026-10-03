@@ -9,7 +9,6 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -24,7 +23,7 @@ import com.easyword.learn.utils.InstallInfo;
 /**
  * 主页：底部四 Tab（识字 / 测验 / 阅读 / 我的）切换，全屏沉浸式。
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private static final String STATE_TAB = "state_selected_tab";
     /** 从字表点某个字进来时，带到首页去练写。 */

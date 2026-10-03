@@ -11,15 +11,13 @@ import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.Random;
 
 /**
  * 启动页：亮一下 App 名，配一句给长辈的话，停一小会儿自动进主页。
  * 轻触屏幕可以立刻跳过。
  */
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
 
     /** 启动页停留时间（毫秒）。 */
     private static final long HOLD_MS = 1800L;

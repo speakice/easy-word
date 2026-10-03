@@ -7,6 +7,16 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
+    <!--
+      朗读：默认引擎读不了中文时，会退回到手机上装的其它语音引擎，
+      所以需要能看到 TTS 服务（Android 11 起不声明就查不到）。
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"

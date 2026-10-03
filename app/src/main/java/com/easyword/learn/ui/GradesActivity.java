@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.easyword.learn.BaseActivity;
 import com.easyword.learn.WordListActivity;
 import com.easyword.learn.data.TestCatalog;
 import com.easyword.learn.databinding.ActivityGradesBinding;
@@ -17,7 +17,7 @@ import com.easyword.learn.viewmodel.WordViewModel;
  * 全部字表：按年级（批次）列出，显示每个年级已识多少个字；
  * 点进某个年级就是那个批次的全部汉字。
  */
-public class GradesActivity extends AppCompatActivity {
+public class GradesActivity extends BaseActivity {
 
     private ActivityGradesBinding binding;
     private WordViewModel viewModel;

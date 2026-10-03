@@ -1,7 +1,6 @@
 package com.easyword.learn.ui;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.easyword.learn.adapter.WordPagerAdapter;
 import com.easyword.learn.data.Word;
@@ -54,9 +53,7 @@ public class CardActions implements WordPagerAdapter.CardListener {
         if (text == null || text.trim().isEmpty()) {
             return;
         }
-        if (!tts.isReady()) {
-            Toast.makeText(context, "语音引擎尚未就绪，请稍后再试", Toast.LENGTH_SHORT).show();
-        }
+        // 引擎没就绪 / 缺语音包时的提示由 TTSManager 统一处理
         tts.speak(text);
     }
 }

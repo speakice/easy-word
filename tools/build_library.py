@@ -39,6 +39,12 @@ IDS_OPS = {
     "⿻": "交叉结构",
 }
 
+# 拆字数据只拆到笔画级的独体字：它们的部首不是自己（如 不/五/年），
+# 但按拆字结果说成“上下结构/全包围”会误导，这里单独点名。
+SOLO_CHARS = set(
+    "不上年也之头世已与才书乐万业及五巴久予由州乌甲丁农专乡丝击承"
+)
+
 # 例句里出现这些音译人名就跳过
 NAME_BLACKLIST = (
     "汤姆", "玛丽", "约翰", "杰克", "大卫", "迈克", "彼得", "保罗", "比尔",
@@ -367,9 +373,9 @@ def render_structure(ch, hanzi):
         # 允许「夕＋寸」这种嵌套部件写法
         return bool(token) and all(CJK.match(c) or c == "＋" for c in token)
 
-    if radical == ch:
-        # 独体字：拆成笔画部件反而会把人绕晕，直接说部首和笔画数
-        return f"部首就是它自己，一共 {strokes} 画" if strokes else ""
+    if radical == ch or ch in SOLO_CHARS:
+        # 独体字：拆字数据在笔画级打转，说“部首就是它自己”没有信息量
+        return f"独体字：共 {strokes} 画，照着笔顺写一写" if strokes else ""
 
     if len(deco) >= 3 and deco[0] in IDS_OPS:
         rest, pieces, i = deco[1:], [], 0
@@ -391,6 +397,9 @@ def render_structure(ch, hanzi):
                 return f"{shape}：由「{a}」和「{b}」组成"
             if len(pieces) == 3:
                 return f"{shape}：" + "、".join(f"「{p}」" for p in pieces)
+        # 部件里有生僻部件（拆字数据写成「？」）时至少把结构说清楚，
+        # 比“部首是「一」，一共 4 画”更有用
+        return IDS_OPS[deco[0]] + (f"，一共 {strokes} 画" if strokes else "")
     return f"部首是「{radical}」，一共 {strokes} 画" if strokes else ""
 
 

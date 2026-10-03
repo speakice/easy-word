@@ -17,9 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.easyword.learn.BaseActivity;
 import com.easyword.learn.R;
 import com.easyword.learn.databinding.ActivitySettingsBinding;
 import com.easyword.learn.databinding.ItemCustomTextBinding;
@@ -39,7 +39,7 @@ import java.util.List;
  * 设置：换头像、改昵称，以及调考试门槛（解锁进度 / 及格 / 良好 / 优秀）。
  * 头像会复制到 App 私有目录，不依赖相册权限。
  */
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     private static final int REQ_PICK = 2001;
     private static final String AVATAR_FILE = "avatar.png";

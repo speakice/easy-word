@@ -7,8 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.easyword.learn.BaseActivity;
 import com.easyword.learn.R;
 import com.easyword.learn.databinding.ActivityPinyinBinding;
 import com.easyword.learn.databinding.ItemTileBinding;
@@ -23,7 +22,7 @@ import java.util.List;
  * 汉语拼音：把 23 个声母、24 个韵母全列出来，点一下读它的读音；
  * 每个分类标题右边的喇叭会从第一个开始自动朗读，读到哪一格哪一格套黄色边框。
  */
-public class PinyinActivity extends AppCompatActivity {
+public class PinyinActivity extends BaseActivity {
 
     private ActivityPinyinBinding binding;
     private TTSManager tts;
@@ -96,11 +95,8 @@ public class PinyinActivity extends AppCompatActivity {
             tile.textTileMain.setText(items[i]);
             tile.textTileSub.setText(sounds[i]);
             final String say = sounds[i];
-            // 手动点某格时先停掉自动朗读，避免两个声音叠在一起
-            tile.getRoot().setOnClickListener(v -> {
-                speaker.stop();
-                tts.speak(say);
-            });
+            // 点某格：先停掉自动朗读（避免两个声音叠在一起），读完这一格黄框自动消失
+            tile.getRoot().setOnClickListener(v -> speaker.speakOne(tile.getRoot(), say));
             tile.getRoot().setLayoutParams(tileParams());
             row.addView(tile.getRoot());
             views.add(tile.getRoot());

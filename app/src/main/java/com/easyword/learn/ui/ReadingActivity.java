@@ -8,8 +8,7 @@ import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.easyword.learn.BaseActivity;
 import com.easyword.learn.R;
 import com.easyword.learn.databinding.ActivityReadingBinding;
 import com.easyword.learn.utils.KaraokeHighlighter;
@@ -18,7 +17,7 @@ import com.easyword.learn.utils.TTSManager;
 /**
  * 阅读页：大字号显示整篇短文，点“朗读全文”逐字跟随朗读（读到哪个字哪个字变色）。
  */
-public class ReadingActivity extends AppCompatActivity {
+public class ReadingActivity extends BaseActivity {
 
     private static final String EXTRA_TITLE = "reading_title";
     private static final String EXTRA_TEXT = "reading_text";

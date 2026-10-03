@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.easyword.learn.BaseActivity;
 import com.easyword.learn.R;
 import com.easyword.learn.adapter.WordPagerAdapter;
 import com.easyword.learn.data.Word;
@@ -24,7 +24,7 @@ import java.util.List;
  * 字表学习页：进入后上下滑动浏览「当前字表」内容，支持描红、练写、逐行朗读、
  * 停留计时与记忆阶段推进，与识字首页共用同一套卡片交互。
  */
-public class StudyPagerActivity extends AppCompatActivity implements WordPagerAdapter.CardListener {
+public class StudyPagerActivity extends BaseActivity implements WordPagerAdapter.CardListener {
 
     private static final String EXTRA_TYPE = "study_type";
     private static final String EXTRA_TITLE = "study_title";

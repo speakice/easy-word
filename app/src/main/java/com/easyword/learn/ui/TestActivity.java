@@ -10,9 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.easyword.learn.BaseActivity;
 import com.easyword.learn.R;
 import com.easyword.learn.data.TestCatalog;
 import com.easyword.learn.data.TestQuestion;
@@ -32,7 +32,7 @@ import java.util.Random;
  * 交卷后进结果页，用红笔手写的分数（{@link ScoreStampView}）+ 评语，
  * 小升初和中考及格还会给毕业称号。
  */
-public class TestActivity extends AppCompatActivity {
+public class TestActivity extends BaseActivity {
 
     private static final String EXTRA_ID = "test_id";
     private static final long FEEDBACK_MS = 1400L;

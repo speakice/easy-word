@@ -7,8 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.easyword.learn.BaseActivity;
 import com.easyword.learn.R;
 import com.easyword.learn.databinding.ActivityTilesBinding;
 import com.easyword.learn.databinding.ItemTileBinding;
@@ -27,7 +26,7 @@ import java.util.List;
  * <p>格子点一下读一个；标题右边的喇叭会把这一页从头读一遍，
  * 读到哪一格哪一格套上黄色边框。</p>
  */
-public class NumberTilesActivity extends AppCompatActivity {
+public class NumberTilesActivity extends BaseActivity {
 
     private static final String EXTRA_KEY = "number_key";
 
@@ -168,11 +167,8 @@ public class NumberTilesActivity extends AppCompatActivity {
             tile.textTileMain.setText(items.get(i));
             tile.textTileSub.setVisibility(View.GONE);
             final String spoken = says.get(i);
-            // 手动点某格时先停掉自动朗读，避免两个声音叠在一起
-            tile.getRoot().setOnClickListener(v -> {
-                speaker.stop();
-                tts.speak(spoken);
-            });
+            // 点某格：先停掉自动朗读（避免两个声音叠在一起），读完这一格黄框自动消失
+            tile.getRoot().setOnClickListener(v -> speaker.speakOne(tile.getRoot(), spoken));
             tile.getRoot().setLayoutParams(tileParams());
             row.addView(tile.getRoot());
             tiles.add(tile.getRoot());

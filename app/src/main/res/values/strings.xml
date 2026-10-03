@@ -104,4 +104,16 @@
     <string name="toast_stroke_cleared">已擦除笔迹</string>
     <string name="tts_not_ready">语音引擎尚未就绪，请稍后再试</string>
     <string name="tts_lang_missing">缺少中文语音数据，请安装 TTS 语音包</string>
+
+    <!-- 点了喇叭没声音时的引导（缺引擎 / 缺中文语音包 / 媒体音量为 0） -->
+    <string name="tts_guide_no_engine_title">手机还不能朗读</string>
+    <string name="tts_guide_no_engine_body">这台手机没有可用的"文字转语音"功能，或者被系统限制住了。\n\n点下面的按钮去系统设置里打开，回到 App 就能听到声音。</string>
+    <string name="tts_guide_no_chinese_title">缺少中文语音包</string>
+    <string name="tts_guide_no_chinese_body">手机的朗读功能还不会读中文。\n\n点下面的按钮下载或选择中文语音，回到 App 就能听到声音。</string>
+    <string name="tts_guide_volume_title">音量被关到最小了</string>
+    <string name="tts_guide_volume_body">手机的媒体音量是 0，所以听不到声音。\n\n按手机侧面的音量加键调大，再点一次喇叭即可。</string>
+    <string name="tts_guide_install">去安装</string>
+    <string name="tts_guide_open_settings">去设置</string>
+    <string name="tts_guide_ok">知道了</string>
+    <string name="tts_guide_manual">请到手机「设置 → 更多设置 → 无障碍 → 文字转语音」里打开朗读功能</string>
 </resources>

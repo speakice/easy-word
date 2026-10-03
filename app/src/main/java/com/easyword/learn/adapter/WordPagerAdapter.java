@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.easyword.learn.R;
 import com.easyword.learn.data.Word;
 import com.easyword.learn.databinding.ItemWordCardBinding;
+import com.easyword.learn.utils.EmphasisText;
 import com.easyword.learn.utils.KaraokeHighlighter;
 import com.easyword.learn.utils.TTSManager;
 import com.easyword.learn.view.DrawingView;
@@ -73,6 +74,7 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private ItemWordCardBinding readingBinding;
+    private Word readingWord;
     private int readingToken;
     private String wordsDisplayText;
 
@@ -112,7 +114,7 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
     }
 
     /**
-     * 自动朗读当前卡片：字 → 拼读（hui，喝，威，hui）→ 词组(xx的x) → 巧记 → 场景，
+     * 自动朗读当前卡片：字 → 拼读（hui，喝，威，hui）→ 词组(xx的x) → 场景 → 巧记，
      * 并逐行高亮跟随。
      */
     public void startReading(ItemWordCardBinding binding, Word word) {
@@ -121,6 +123,8 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
             return;
         }
         if (!ttsManager.isReady()) {
+            // 引擎不可用（没装语音包 / 没引擎）时说清楚原因，别让长辈对着没声的手机干等
+            ttsManager.warnIfUnavailable();
             final int token = readingToken;
             handler.postDelayed(() -> {
                 if (token == readingToken && ttsManager.isReady()) {
@@ -138,6 +142,7 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
         ttsManager.stop();
         resetHighlights(readingBinding);
         readingBinding = null;
+        readingWord = null;
     }
 
     /** 构建朗读片段列表并逐段播放。 */
@@ -145,6 +150,7 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
         final ItemWordCardBinding b = binding;
         final int token = readingToken;
         readingBinding = binding;
+        readingWord = word;
 
         List<Segment> segments = buildSegments(b, word);
         if (segments.isEmpty()) {
@@ -199,7 +205,7 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
         });
     }
 
-    /** 根据卡片内容生成朗读片段（字、每个词组、顺口溜、场景）。 */
+    /** 根据卡片内容生成朗读片段（字、每个词组、场景、巧记），顺序和面板从上到下一致。 */
     private List<Segment> buildSegments(ItemWordCardBinding b, Word word) {
         List<Segment> segments = new ArrayList<>();
         Context ctx = b.getRoot().getContext();
@@ -224,14 +230,15 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
             }
         }
         wordsDisplayText = wordsDisplayText(word);
-        b.textWords.setText(wordsDisplayText);
+        b.textWords.setText(EmphasisText.mark(wordsDisplayText, word.getWord()));
         for (int i = 0; i < wordArr.length; i++) {
             segments.add(new Segment(TYPE_WORD, wordArr[i] + "的" + word.getWord(),
                     wordArr[i], i, starts));
         }
 
-        segments.add(new Segment(TYPE_RHYME, word.getRhyme(), null, -1, null));
+        // 巧记排在最后：面板里它也在最后一行，高亮就不会来回跳
         segments.add(new Segment(TYPE_USAGE, word.getUsage(), null, -1, null));
+        segments.add(new Segment(TYPE_RHYME, word.getRhyme(), null, -1, null));
         return segments;
     }
 
@@ -341,7 +348,8 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
         b.textUsage.setBackground(null);
         b.textWords.setBackground(null);
         String plain = wordsDisplayText != null ? wordsDisplayText : b.textWords.getText().toString();
-        b.textWords.setText(plain);
+        b.textWords.setText(readingWord == null ? plain
+                : EmphasisText.mark(plain, readingWord.getWord()));
     }
 
     @NonNull
@@ -365,7 +373,7 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
             }
         });
 
-        // 大字旁边的喇叭：跟着读一遍（认字 → 拼读 → 词组 → 巧记 → 场景）
+        // 大字旁边的喇叭：跟着读一遍（认字 → 拼读 → 词组 → 场景 → 巧记）
         binding.btnPlayWord.setOnClickListener(v -> {
             Word word = wordOf(holder);
             if (word != null) {
@@ -406,8 +414,10 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
                 com.easyword.learn.utils.PinyinHelper.display(word.getPinyin()));
         // 行首的喇叭就是这三行的标记，所以不再显示“词组/巧记/场景”这些字
         holder.binding.textRhyme.setText(word.getRhyme());
-        holder.binding.textWords.setText(wordsDisplayText(word));
-        holder.binding.textUsage.setText(word.getUsage());
+        // 词组和例句里把当前学的字标出来（加粗 + 着重号），读的时候跟着变色
+        holder.binding.textWords.setText(
+                EmphasisText.mark(wordsDisplayText(word), word.getWord()));
+        holder.binding.textUsage.setText(EmphasisText.mark(word.getUsage(), word.getWord()));
         holder.binding.textRhyme.setBackground(null);
         holder.binding.textUsage.setBackground(null);
         holder.binding.textWords.setBackground(null);

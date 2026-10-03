@@ -6,8 +6,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.easyword.learn.BaseActivity;
 import com.easyword.learn.data.TestCatalog;
 import com.easyword.learn.data.TestScores;
 import com.easyword.learn.utils.Settings;
@@ -23,7 +22,7 @@ import java.util.Locale;
  * 我的成绩：**每一次考试都单独一条**，按时间从新到旧排列，
  * 读作「什么时间 · 哪个年级 · 考了多少分」。同一个年级在不同日期考的会各占一行。
  */
-public class ScoresActivity extends AppCompatActivity {
+public class ScoresActivity extends BaseActivity {
 
     private ActivityScoresBinding binding;
 
