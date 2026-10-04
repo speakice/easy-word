@@ -21,7 +21,8 @@ import com.easyword.learn.viewmodel.WordViewModel;
 import com.easyword.learn.utils.InstallInfo;
 
 /**
- * 主页：底部四 Tab（识字 / 测验 / 阅读 / 我的）切换，全屏沉浸式。
+ * 主页：底部四 Tab（识字 / 测验 / 阅读 / 我的）切换。
+ * 只隐藏顶部状态栏，保留手机底部的三键导航（返回 / 桌面 / 最近任务）。
  */
 public class MainActivity extends BaseActivity {
 
@@ -131,27 +132,27 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        enterImmersiveMode();
+        hideStatusBarOnly();
     }
 
-    /** 隐藏状态栏与导航栏（API 30+ 用 WindowInsetsController，兼容低版本）。 */
-    private void enterImmersiveMode() {
+    /**
+     * 只隐藏顶部状态栏，保留手机底部的三键导航（API 30+ 用 WindowInsetsController，兼容低版本）。
+     *
+     * <p>以前把导航栏也藏了，长辈找不到返回键就容易卡在页面里，所以这里只藏状态栏。</p>
+     */
+    private void hideStatusBarOnly() {
         Window window = getWindow();
         View decorView = window.getDecorView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(false);
             WindowInsetsController controller = window.getInsetsController();
             if (controller != null) {
-                controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
+                controller.hide(WindowInsets.Type.statusBars());
                 controller.setSystemBarsBehavior(
                         WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
             }
         } else {
             decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                    View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             window.setStatusBarColor(android.graphics.Color.BLACK);
             window.setNavigationBarColor(android.graphics.Color.BLACK);
         }

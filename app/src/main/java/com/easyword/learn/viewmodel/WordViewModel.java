@@ -17,9 +17,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -389,30 +392,55 @@ public class WordViewModel extends AndroidViewModel {
         });
     }
 
+    /** 常用字入库结果：新增几个、从别的批次挪过来几个、放到哪一批。 */
+    public static class CustomApplyResult {
+        /** 字库里没有、这次新加进来的字。 */
+        public final int added;
+        /** 字库里已经有、从原来的批次挪过来的字。 */
+        public final int moved;
+        /** 放进的批次。 */
+        public final int batch;
+
+        CustomApplyResult(int added, int moved, int batch) {
+            this.added = added;
+            this.moved = moved;
+            this.batch = batch;
+        }
+    }
+
     /**
-     * 把新字插入指定批次：前面批次已有的字会跳过；每批最多 100 字，
-     * 超出的往后顺延，总共超过 1000 的都会落在第 10 批。
+     * 把常用字整批放进指定批次：字库里没有的新字插入，字库里已经有的从原批次挪过来
+     * （原批次里就不再有这个字）。两种字都用负 id 排在选定批次的最前面，
+     * 所以每批超出 100 字顺延时，让出去的是这一批原有的字，她自己填的字留在选定的批次里。
      */
     public void addCustomChars(List<String> chars, int targetBatch,
-                               java.util.function.Consumer<Integer> callback) {
+                               java.util.function.Consumer<CustomApplyResult> callback) {
         android.content.Context app = getApplication();
+        final int target = Math.max(1, Math.min(10, targetBatch));
         repository.execute(() -> {
             WordDao dao = dao();
-            java.util.Set<String> existing = new HashSet<>();
-            for (Word w : dao.getAllWordsSync()) {
-                existing.add(w.getWord());
-            }
-            int added = 0;
-            // 新字用负 id，排在所在批次的最前面，这样"顺延出去"的是原有字的末尾，
-            // 她自己加的字能留在选定的那一批里
+            Map<String, Word> library = new HashMap<>();
             int lowestId = 0;
             for (Word w : dao.getAllWordsSync()) {
+                library.put(w.getWord(), w);
                 lowestId = Math.min(lowestId, w.getId());
             }
-            int nextId = lowestId - 1 - chars.size();
-            for (String ch : chars) {
-                if (ch == null || ch.isEmpty() || existing.contains(ch)) {
-                    continue;   // 前面批次已经有的字不再重复添加
+            List<String> wanted = new ArrayList<>(new LinkedHashSet<>(chars));
+            int nextId = lowestId - 1 - wanted.size();
+            int added = 0;
+            int moved = 0;
+            for (String ch : wanted) {
+                if (ch == null || ch.isEmpty()) {
+                    continue;
+                }
+                Word old = library.get(ch);
+                if (old != null) {
+                    // 字库里已经有这个字：从原来的批次挪到选定批次
+                    if (old.getBatch() != target) {
+                        dao.moveToBatch(old.getId(), nextId++, target);
+                        moved++;
+                    }
+                    continue;
                 }
                 List<com.easyword.learn.utils.CustomText.Entry> hits =
                         com.easyword.learn.utils.CustomText.entriesContaining(app, ch);
@@ -440,10 +468,9 @@ public class WordViewModel extends AndroidViewModel {
                 word.setWords(words.toString());
                 word.setUsage(usage.toString());
                 word.setRhyme(rhyme);
-                word.setBatch(Math.max(1, Math.min(10, targetBatch)));
+                word.setBatch(target);
                 word.setId(nextId++);
                 dao.insert(word);
-                existing.add(ch);
                 added++;
             }
             // 每批最多 100 字：多出来的依次顺延，最后都堆到第 10 批
@@ -453,9 +480,9 @@ public class WordViewModel extends AndroidViewModel {
                     dao.updateBatch(ids.get(i), b + 1);
                 }
             }
-            final int addedCount = added;
+            final CustomApplyResult result = new CustomApplyResult(added, moved, target);
             new android.os.Handler(android.os.Looper.getMainLooper())
-                    .post(() -> callback.accept(addedCount));
+                    .post(() -> callback.accept(result));
         });
         refreshStudyOrder();
     }

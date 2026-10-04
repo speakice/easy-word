@@ -19,11 +19,17 @@ import com.easyword.learn.utils.TTSManager;
  *
  * <p><b>2. 登记当前前台页面。</b>手机缺少朗读引擎 / 中文语音包时，需要弹框引导用户去系统设置里装，
  * 但发起朗读的地方（适配器、工具类）拿不到界面，所以在这里登记一个弱引用给 {@link TTSManager} 用。</p>
+ *
+ * <p><b>3. 离开页面 / 退出 App 时停掉朗读。</b>点返回键或页面上的"返回"按钮退出时立刻停；
+ * 整个 App 退到后台（回桌面、切到别的 App、息屏）时也停，不然人已经走了声音还在念。</p>
  */
 public class BaseActivity extends AppCompatActivity {
 
     /** 本 App 固定使用的字体缩放系数：忽略系统"字体大小"设置。 */
     private static final float FIXED_FONT_SCALE = 1.0f;
+
+    /** 处于"已启动"状态的页面数：减到 0 就说明整个 App 退到后台了。 */
+    private static int startedCount;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -74,8 +80,29 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        startedCount++;
+    }
+
+    @Override
+    protected void onStop() {
+        startedCount = Math.max(0, startedCount - 1);
+        if (startedCount == 0) {
+            // 整个 App 退到后台：没人看屏幕了，把还在念的语音停掉
+            TTSManager.getInstance(this).stop();
+        }
+        super.onStop();
+    }
+
+    @Override
     protected void onPause() {
-        TTSManager.getInstance(this).clearHost(this);
+        TTSManager tts = TTSManager.getInstance(this);
+        // 点返回键或页面上的"返回"按钮退出本页时，立刻停掉朗读，别让声音留在身后
+        if (isFinishing()) {
+            tts.stop();
+        }
+        tts.clearHost(this);
         super.onPause();
     }
 }

@@ -95,6 +95,26 @@ public final class TTSManager {
         startInit();
     }
 
+    /**
+     * 不需要回调时用的空监听器。
+     *
+     * <p>必须显式设置：{@link TextToSpeech} 上的监听器是全局的，单字朗读如果不带监听器，
+     * 系统会把上一次（自动朗读）的监听器继续回调，于是点一下范字，整串词组/例句又接着念完了。</p>
+     */
+    private static final UtteranceProgressListener NO_OP_LISTENER = new UtteranceProgressListener() {
+        @Override
+        public void onStart(String utteranceId) {
+        }
+
+        @Override
+        public void onDone(String utteranceId) {
+        }
+
+        @Override
+        public void onError(String utteranceId) {
+        }
+    };
+
     /** 获取单例，首次调用时初始化引擎。 */
     public static TTSManager getInstance(Context context) {
         if (instance == null) {
@@ -300,9 +320,7 @@ public final class TTSManager {
         }
         warnIfVolumeZero();
         String id = "easyword_" + (++sequenceId);
-        if (listener != null) {
-            tts.setOnUtteranceProgressListener(listener);
-        }
+        tts.setOnUtteranceProgressListener(listener != null ? listener : NO_OP_LISTENER);
         tts.speak(text, queueMode, (Bundle) null, id);
     }
 

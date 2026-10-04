@@ -377,7 +377,10 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
         binding.btnPlayWord.setOnClickListener(v -> {
             Word word = wordOf(holder);
             if (word != null) {
-                startReading(holder.binding, word);
+                // 只读这一个字的音。整串"认字 → 拼读 → 词组 → 场景 → 巧记"是翻到这一页时
+                // 自动朗读做的事，点这里再念一遍会显得没完没了。
+                stopReading();
+                cardListener.onSpeak(word.getWord());
             }
         });
         // 点某一行的喇叭：朗读这一行，同时逐字跟着变色
@@ -467,12 +470,13 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
         });
     }
 
-    /** 大字区手势（笔画覆盖层）：单击朗读、双击/左滑收藏；擦除只用“擦除”按钮。 */
+    /** 大字区手势（笔画覆盖层）：单击暂停/继续描红、双击/左滑收藏；擦除只用“擦除”按钮。 */
     private void bindStrokeGestures(ItemWordCardBinding binding, CardViewHolder holder) {
         binding.strokeView.setGestureListener(new StrokeAnimationView.OnCardGestureListener() {
             @Override
             public void onSingleTap() {
-                tapAt(holder);
+                // 点范字：正在描红就停在当前笔画，已经停了就从第一笔重新描
+                binding.strokeView.toggleAnimation();
             }
 
             @Override
@@ -495,6 +499,9 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
     private void tapAt(CardViewHolder holder) {
         Word word = wordOf(holder);
         if (word != null) {
+            // 点范字只念这一个字：先把正在自动朗读的整串（拼读/词组/例句/巧记）停掉，
+            // 不然单字读完后这段朗读会被监听器接着往下念
+            stopReading();
             cardListener.onWordTap(word);
         }
     }

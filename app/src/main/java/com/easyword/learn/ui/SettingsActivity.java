@@ -290,7 +290,7 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
-    /** 分析资料里的字，问清楚加到哪一批，然后插入字库。 */
+    /** 分析资料里的字，问清楚放到哪一批，然后整批加入（字库里已有的从原批次挪过来）。 */
     private void mergeCustomText() {
         collectCustomRows();
         CustomText.save(this, customEntries);
@@ -300,30 +300,22 @@ public class SettingsActivity extends BaseActivity {
             return;
         }
         viewModel.analyzeCustomText(text, analysis -> {
-            if (analysis.fresh.isEmpty()) {
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.settings_custom)
-                        .setMessage(getString(R.string.settings_custom_all_known,
-                                join(analysis.known)))
-                        .setPositiveButton("知道了", null)
-                        .show();
-                return;
-            }
+            // 字库里已有的字也要一起挪到选定批次，所以不再分“已有 / 新增”两条路
+            List<String> all = new ArrayList<>(analysis.known);
+            all.addAll(analysis.fresh);
             new AlertDialog.Builder(this)
                     .setTitle(R.string.settings_custom)
                     .setMessage(getString(R.string.settings_custom_analysis,
-                            analysis.known.size() + analysis.fresh.size(),
-                            analysis.known.size(), analysis.fresh.size(),
-                            join(analysis.fresh)))
+                            all.size(), analysis.fresh.size(), analysis.known.size()))
                     .setNegativeButton("取消", null)
                     .setPositiveButton(R.string.settings_custom_pick_batch,
-                            (d, w) -> pickBatch(analysis.fresh))
+                            (d, w) -> pickBatch(all))
                     .show();
         });
     }
 
     /** 选批次（默认当前正在学的那批）。 */
-    private void pickBatch(List<String> fresh) {
+    private void pickBatch(List<String> chars) {
         String[] names = new String[10];
         int checked = Math.max(0, Math.min(9, currentBatch - 1));
         for (int i = 0; i < 10; i++) {
@@ -335,21 +327,16 @@ public class SettingsActivity extends BaseActivity {
                 .setSingleChoiceItems(names, checked, (d, which) -> choice[0] = which)
                 .setNegativeButton("取消", null)
                 .setPositiveButton("加入", (d, w) -> viewModel.addCustomChars(
-                        fresh, choice[0] + 1, added -> Toast.makeText(this,
-                                getString(R.string.settings_custom_added, added),
-                                Toast.LENGTH_LONG).show()))
+                        chars, choice[0] + 1, result -> {
+                            String batch = TestCatalog.batchName(result.batch);
+                            int message = result.added + result.moved == 0
+                                    ? R.string.settings_custom_same_batch
+                                    : R.string.settings_custom_added;
+                            Toast.makeText(this, getString(message, batch,
+                                            result.added, result.moved),
+                                    Toast.LENGTH_LONG).show();
+                        }))
                 .show();
-    }
-
-    private static String join(List<String> chars) {
-        StringBuilder sb = new StringBuilder();
-        for (String ch : chars) {
-            if (sb.length() > 0) {
-                sb.append(' ');
-            }
-            sb.append(ch);
-        }
-        return sb.toString();
     }
 
     private int dp(int value) {

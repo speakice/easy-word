@@ -59,6 +59,13 @@ public interface WordDao {
     @Query("UPDATE words SET batch = :batch WHERE id = :id")
     void updateBatch(int id, int batch);
 
+    /**
+     * 把字挪到别的批次，同时换一个更小的 id：常用字要排在选定批次的最前面，
+     * 这样每批超出 100 字顺延时，让出去的是这一批原有的字。
+     */
+    @Query("UPDATE words SET id = :newId, batch = :batch WHERE id = :oldId")
+    void moveToBatch(int oldId, int newId, int batch);
+
     @Query("SELECT COUNT(*) FROM words WHERE word = :ch")
     int countByChar(String ch);
 

@@ -15,7 +15,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="42dp">
+            android:layout_marginTop="8dp">
 
             <TextView
                 android:id="@+id/textPinyin"
@@ -31,19 +31,20 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1.5">
 
             <TextView
                 android:id="@+id/textWord"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:includeFontPadding="false"
                 android:maxLines="1"
                 android:textColor="@color/white"
                 android:text="家"
                 android:translationY="12dp"
                 app:autoSizeTextType="uniform"
-                app:autoSizeMinTextSize="96sp"
+                app:autoSizeMinTextSize="72sp"
                 app:autoSizeMaxTextSize="220sp"
                 app:autoSizeStepGranularity="2sp" />
 
@@ -69,63 +70,14 @@
                 android:translationY="12dp" />
         </FrameLayout>
 
-        <!--
-          练写行：左边「存图」、中间方形田字格、右边「擦除」。
-          三个控件都跟着这一行排，格子的边长只跟屏幕宽度有关，
-          所以不管下面的词组/巧记/场景有几行，格子和按钮的间距都不会变。
-        -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <ImageButton
-                android:id="@+id/btnSave"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/bg_round_button"
-                android:contentDescription="@string/save_drawing"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:padding="10dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_save_image" />
-
-            <com.easyword.learn.view.DrawingView
-                android:id="@+id/drawingView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/bg_draw_strip" />
-
-            <ImageButton
-                android:id="@+id/btnClear"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginStart="6dp"
-                android:background="@drawable/bg_round_button"
-                android:contentDescription="@string/clear_stroke"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:padding="10dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_broom" />
-        </LinearLayout>
-
-        <!-- 底部知识面板：词组 → 场景（同字号）→ 巧记（小一号、灰色，弱化） -->
+        <!-- 知识面板：词组 → 场景（同字号）→ 巧记（小一号、灰色，弱化）；放在写字区上方 -->
         <LinearLayout
             android:id="@+id/infoPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="2dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -159,7 +111,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -189,7 +141,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -216,15 +168,57 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- 写字区按钮：原来在田字格左右，现在统一挪到田字格上方正中 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageButton
+                android:id="@+id/btnSave"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="32dp"
+                android:alpha="0.7"
+                android:background="@drawable/bg_round_button"
+                android:contentDescription="@string/save_drawing"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_save_image" />
+
+            <ImageButton
+                android:id="@+id/btnClear"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:alpha="0.7"
+                android:background="@drawable/bg_round_button"
+                android:contentDescription="@string/clear_stroke"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_broom" />
+        </LinearLayout>
+
         <!--
-          底部留白：把多余的竖向空间分一点到这里。
-          范字区是权重块（多余空间默认全给它，范字和练写格之间就会显得空），
-          加上这块之后范字会往上收一点、离练写格更近，「场景」那行也不会贴着底部标签栏。
+          练写区：宽度撑满卡片左右，高度取和宽度一样的正方形（DrawingView 自己算）。
+          高度不够时它会缩成小一点的正方形，不会把上面的范字挤掉。
         -->
-        <View
+        <com.easyword.learn.view.DrawingView
+            android:id="@+id/drawingView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.15" />
+            android:layout_weight="3"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/bg_draw_strip" />
     </LinearLayout>
 
     <!-- 飘心动画 -->

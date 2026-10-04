@@ -15,7 +15,10 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.PathParser;
+
+import com.easyword.learn.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -76,11 +79,11 @@ public class StrokeAnimationView extends View {
 
         strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         strokePaint.setStyle(Paint.Style.FILL);
-        strokePaint.setColor(0xFFFFEB3B);
+        strokePaint.setColor(ContextCompat.getColor(context, R.color.stroke_red));
 
         penTipPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         penTipPaint.setStyle(Paint.Style.FILL);
-        penTipPaint.setColor(0xFFFFEB3B);
+        penTipPaint.setColor(ContextCompat.getColor(context, R.color.stroke_red));
 
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
     }
@@ -118,6 +121,23 @@ public class StrokeAnimationView extends View {
         stopAnimator();
         rebuild();
         startAnimator();
+    }
+
+    /** 描红是否正在播放。 */
+    public boolean isAnimating() {
+        return animator != null && animator.isRunning();
+    }
+
+    /**
+     * 点一下范字的效果：正在描红就停在当前进度（已经描出来的部分留在屏幕上），
+     * 已经停了就从第一笔重新描一遍。
+     */
+    public void toggleAnimation() {
+        if (isAnimating()) {
+            stopAnimator();
+        } else {
+            replay();
+        }
     }
 
     @Override
@@ -283,14 +303,14 @@ public class StrokeAnimationView extends View {
         return box;
     }
 
-    /** 慢速无限循环：按笔顺一笔一笔写。 */
+    /** 慢速无限循环：按笔顺一笔一笔写（越慢长辈越看得清）。 */
     private void startAnimator() {
         if (strokes.isEmpty()) {
             return;
         }
         stopAnimator();
         animator = ValueAnimator.ofFloat(0f, 1f);
-        animator.setDuration(8000L);
+        animator.setDuration(28000L);
         animator.setInterpolator(new LinearInterpolator());
         animator.setRepeatCount(ValueAnimator.INFINITE);
         animator.setRepeatMode(ValueAnimator.RESTART);
