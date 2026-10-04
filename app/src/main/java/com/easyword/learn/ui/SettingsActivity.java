@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewOutlineProvider;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -197,18 +198,65 @@ public class SettingsActivity extends BaseActivity {
             lp.rightMargin = dp(8);
             chip.setLayoutParams(lp);
             chip.setOnClickListener(v -> {
+                // 先收回已经输入的内容，否则重绘时刚打的字会丢
+                collectCustomRows();
+                int existing = indexOfLabel(preset);
+                if (existing >= 0) {
+                    // 已经有这一项了：不重复添加，直接把光标送过去
+                    focusValueOf(existing);
+                    return;
+                }
                 customEntries.add(new CustomText.Entry(preset, ""));
                 renderCustomRows();
+                focusValueOf(customEntries.size() - 1);
             });
             binding.presetBox.addView(chip);
         }
 
         binding.btnAddCustom.setOnClickListener(v -> {
+            collectCustomRows();
             customEntries.add(new CustomText.Entry("", ""));
             renderCustomRows();
+            focusValueOf(customEntries.size() - 1);
         });
         binding.btnMergeCustom.setOnClickListener(v -> mergeCustomText());
         renderCustomRows();
+    }
+
+    @Override
+    protected void onPause() {
+        // 输入到一半直接返回也不丢：离开页面前先把界面上的内容收回并保存
+        collectCustomRows();
+        CustomText.save(this, customEntries);
+        super.onPause();
+    }
+
+    /** 找到名称相同的那一项，没有返回 -1。 */
+    private int indexOfLabel(String label) {
+        for (int i = 0; i < customEntries.size(); i++) {
+            if (label.equals(customEntries.get(i).label)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /** 把焦点和光标送到某一行的「内容」输入框，接着就能打字。 */
+    private void focusValueOf(int index) {
+        if (index < 0 || index >= binding.customBox.getChildCount()) {
+            return;
+        }
+        EditText value = binding.customBox.getChildAt(index).findViewById(R.id.editValue);
+        if (value == null) {
+            return;
+        }
+        value.requestFocus();
+        value.setSelection(value.getText().length());
+        InputMethodManager imm =
+                (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.showSoftInput(value, InputMethodManager.SHOW_IMPLICIT);
+        }
     }
 
     private void renderCustomRows() {
