@@ -20,7 +20,7 @@
 
 安装时如果系统提示"未知来源"，在弹窗里允许一次即可。装好打开就能用，全程离线。
 
-<sub>也可以直接下这个版本：[EasyWord-v1.8.apk](https://github.com/speakice/easy-word/releases/download/v1.8/EasyWord-v1.8.apk)（19.2 MB）</sub>
+<sub>也可以直接下这个版本：[EasyWord-v1.9.apk](https://github.com/speakice/easy-word/releases/download/v1.9/EasyWord-v1.9.apk)（19.2 MB）</sub>
 
 ---
 
