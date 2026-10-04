@@ -69,12 +69,14 @@ public class DrawingView extends View {
         strokePaint.setStrokeCap(Paint.Cap.ROUND);
         strokePaint.setStrokeJoin(Paint.Join.ROUND);
 
-        // 田字格辅助线：淡淡的虚线，帮助老人把字写在格子中央
+        // 田字格辅助线：虚线十字，帮助老人把字写在格子中央。
+        // 以前是 2px + 25% 白，太淡了看不清（老人反馈），现在加粗到 1.6dp、提到 45% 白。
+        float density = getResources().getDisplayMetrics().density;
         guidePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         guidePaint.setStyle(Paint.Style.STROKE);
-        guidePaint.setStrokeWidth(2f);
-        guidePaint.setColor(0x40FFFFFF);
-        guidePaint.setPathEffect(new DashPathEffect(new float[]{16f, 14f}, 0f));
+        guidePaint.setStrokeWidth(1.6f * density);
+        guidePaint.setColor(0x73FFFFFF);
+        guidePaint.setPathEffect(new DashPathEffect(new float[]{9f * density, 7f * density}, 0f));
 
         touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
 

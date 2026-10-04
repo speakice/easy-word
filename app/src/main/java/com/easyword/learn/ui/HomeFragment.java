@@ -124,6 +124,8 @@ public class HomeFragment extends Fragment implements WordPagerAdapter.CardListe
     @Override
     public void onResume() {
         super.onResume();
+        // 刚考完试回来时，年级（考试通过的最高年级 + 1）可能变了，变了才重排卡片
+        viewModel.refreshGradeIfNeeded();
         if (binding != null) {
             startReadingPage(activePage);
         }

@@ -65,6 +65,9 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
     private final CardListener cardListener;
     private final TTSManager ttsManager;
 
+    /** 朗读时的跟读高亮色：跟描红笔迹同一个红（= {@code R.color.stroke_red}）。 */
+    private static final int READ_HIGHLIGHT = 0xFFFF3B30;
+
     // ---- 自动朗读（歌词跟随）状态 ----
     private static final int TYPE_CHAR = 0;
     private static final int TYPE_SPELL = 4;
@@ -247,12 +250,12 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
         prepareKaraoke(b);
         switch (segment.type) {
             case TYPE_CHAR:
-                b.textWord.setTextColor(0xFFFFEB3B);
+                b.textWord.setTextColor(READ_HIGHLIGHT);
                 b.strokeView.replay();
                 break;
             case TYPE_SPELL:
-                // 拼读时把拼音标黄，方便跟着念
-                b.textPinyin.setTextColor(0xFFFFEB3B);
+                // 拼读时把拼音标红（跟朗读高亮同色），方便跟着念
+                b.textPinyin.setTextColor(READ_HIGHLIGHT);
                 break;
             case TYPE_WORD:
                 // 拼读读完了，拼音恢复成灰色

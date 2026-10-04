@@ -9,15 +9,15 @@ import android.text.style.ForegroundColorSpan;
 import android.widget.TextView;
 
 /**
- * 逐字跟读：读到哪里，从开头到那个字的文字就变成黄色（只改文字颜色，不加底色）。
+ * 逐字跟读：读到哪里，从开头到那个字的文字就变成红色（只改文字颜色，不加底色）。
  *
- * <p>例：读到「我爱你」的「爱」时，「我爱」两个字是黄色的，后面还没读的保持原来的颜色。
+ * <p>例：读到「我爱你」的「爱」时，「我爱」两个字是红的，后面还没读的保持原来的颜色。
  * 优先用 TTS 引擎上报的 onRangeStart 精确定位；引擎不上报时按中文朗读速度估算推进。</p>
  */
 public final class KaraokeHighlighter {
 
-    /** 已经读过的文字的颜色。 */
-    private static final int READ_COLOR = 0xFFFFEB3B;
+    /** 已经读过的文字的颜色：跟描红笔迹同一个红（= {@code R.color.stroke_red}）。 */
+    private static final int READ_COLOR = 0xFFFF3B30;
 
     /** 估算参数：引擎起播有一点延迟，之后约每 170ms 一个字。 */
     private static final long TICK_MS = 50L;
@@ -108,7 +108,7 @@ public final class KaraokeHighlighter {
         handler.postDelayed(ticker, TICK_MS);
     }
 
-    /** 把 [colorFrom, position] 这段文字染成黄色，后面的字保持原色。 */
+    /** 把 [colorFrom, position] 这段文字染成红色，后面的字保持原色。 */
     private void paint(int position) {
         if (view == null || plain == null) {
             return;

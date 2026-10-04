@@ -1,6 +1,7 @@
 package com.easyword.learn.viewmodel;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -8,10 +9,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.easyword.learn.data.DailyRecord;
+import com.easyword.learn.data.TestCatalog;
+import com.easyword.learn.data.TestScores;
 import com.easyword.learn.data.Word;
 import com.easyword.learn.data.WordDao;
 import com.easyword.learn.data.WordDatabase;
 import com.easyword.learn.data.WordRepository;
+import com.easyword.learn.utils.Settings;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 主视图模型：字库初始化、批次解锁（每组学过 80% 后进入下一组）、
+ * 主视图模型：字库初始化、年级推进（通过本年级期末考试后进入下一组）、
  * 记忆曲线随机顺序、单字学习计时、测验权重与各项统计。
  */
 public class WordViewModel extends AndroidViewModel {
@@ -40,7 +44,7 @@ public class WordViewModel extends AndroidViewModel {
         public final int known;
         public final int unknown;
         public final int currentBatch;
-        /** 每一批（年级）的已学进度百分比，下标 1~10；批次解锁和考试解锁都看这个。 */
+        /** 每一批（年级）的已学进度百分比，下标 1~10；考试解锁看这个。 */
         public final int[] batchPercent;
         /** 每一批已识的字数，下标 1~10。 */
         public final int[] batchKnown;
@@ -101,6 +105,8 @@ public class WordViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Word>> quizDeck = new MutableLiveData<>();
     private long pendingDaily;
     private boolean seeded;
+    /** 上次算出来的年级（第几批）；-1 表示还没算过。回首页时用它判断要不要重排。 */
+    private volatile int lastGrade = -1;
 
     public WordViewModel(@NonNull Application application) {
         super(application);
@@ -121,60 +127,76 @@ public class WordViewModel extends AndroidViewModel {
     // ---------- 学习顺序（记忆曲线） ----------
 
     /**
-     * 解锁当前批次并构建首页滑动顺序（随机化 + 权重排序）：
+     * 构建首页滑动顺序（随机化 + 权重排序）：
      * 未识字(学过但没记牢，权重高优先) → 全新字 → 到期的已识字复习 → 未到期已识字。
      */
     public void refreshStudyOrder() {
-        repository.execute(() -> {
-            int currentBatch = currentBatch();
-            List<Word> all = repository != null ? daoList(currentBatch) : null;
-            if (all == null) {
-                return;
-            }
-            long now = System.currentTimeMillis();
-            List<Word> pristine = new ArrayList<>();
-            List<Word> weak = new ArrayList<>();
-            List<Word> due = new ArrayList<>();
-            List<Word> fresh = new ArrayList<>();
-            for (Word w : all) {
-                if (!w.isLearned()) {
-                    pristine.add(w);
-                } else if (!w.isKnown()) {
-                    weak.add(w);
-                } else if (isDue(w, now)) {
-                    due.add(w);
-                } else {
-                    fresh.add(w);
-                }
-            }
-            // 权重越高越靠前（测验判定“不识”后加大首页权重）
-            weak.sort((a, b) -> Integer.compare(b.getWeight(), a.getWeight()));
-            List<Word> order = new ArrayList<>();
-            order.addAll(shuffle(weak));
-            order.addAll(shuffle(pristine));
-            order.addAll(shuffle(due));
-            order.addAll(shuffle(fresh));
-            studyOrder.postValue(order);
+        repository.execute(this::rebuildStudyOrder);
+    }
 
-            WordDao dao = dao();
-            // 记录每一批的学习进度（识字率），考试解锁用
-            int[] batchPercent = new int[11];
-            int[] batchKnown = new int[11];
-            int[] batchLearned = new int[11];
-            int[] batchTotal = new int[11];
-            for (int b = 1; b <= 10; b++) {
-                int totalInBatch = dao.countInBatch(b);
-                batchTotal[b] = totalInBatch;
-                batchKnown[b] = dao.countKnownInBatch(b);
-                batchLearned[b] = dao.countLearnedInBatch(b);
-                // 学习进度 = 已学比例（考试解锁也用它）
-                batchPercent[b] = totalInBatch == 0
-                        ? 0 : batchLearned[b] * 100 / totalInBatch;
+    /**
+     * 回到首页时调用：年级变了（比如刚考完一场期末考）才重排学习顺序，
+     * 没变就什么都不做，免得每次回首页都把顺序打乱、卡片跳页。
+     */
+    public void refreshGradeIfNeeded() {
+        repository.execute(() -> {
+            if (currentBatch() != lastGrade) {
+                rebuildStudyOrder();
             }
-            stats.postValue(new Stats(dao.countWords(), dao.countLearned(),
-                    dao.countKnown(), dao.countUnknown(), currentBatch,
-                    batchPercent, batchKnown, batchLearned, batchTotal));
         });
+    }
+
+    /** 重排学习顺序并刷新统计（调用方负责在后台线程执行）。 */
+    private void rebuildStudyOrder() {
+        int currentBatch = currentBatch();
+        lastGrade = currentBatch;
+        List<Word> all = repository != null ? daoList(currentBatch) : null;
+        if (all == null) {
+            return;
+        }
+        long now = System.currentTimeMillis();
+        List<Word> pristine = new ArrayList<>();
+        List<Word> weak = new ArrayList<>();
+        List<Word> due = new ArrayList<>();
+        List<Word> fresh = new ArrayList<>();
+        for (Word w : all) {
+            if (!w.isLearned()) {
+                pristine.add(w);
+            } else if (!w.isKnown()) {
+                weak.add(w);
+            } else if (isDue(w, now)) {
+                due.add(w);
+            } else {
+                fresh.add(w);
+            }
+        }
+        // 权重越高越靠前（测验判定“不识”后加大首页权重）
+        weak.sort((a, b) -> Integer.compare(b.getWeight(), a.getWeight()));
+        List<Word> order = new ArrayList<>();
+        order.addAll(shuffle(weak));
+        order.addAll(shuffle(pristine));
+        order.addAll(shuffle(due));
+        order.addAll(shuffle(fresh));
+        studyOrder.postValue(order);
+
+        WordDao dao = dao();
+        // 记录每一批的学习进度（识字率），考试解锁用
+        int[] batchPercent = new int[11];
+        int[] batchKnown = new int[11];
+        int[] batchLearned = new int[11];
+        int[] batchTotal = new int[11];
+        for (int b = 1; b <= 10; b++) {
+            int totalInBatch = dao.countInBatch(b);
+            batchTotal[b] = totalInBatch;
+            batchKnown[b] = dao.countKnownInBatch(b);
+            batchLearned[b] = dao.countLearnedInBatch(b);
+            // 学习进度 = 已学比例（考试解锁也用它）
+            batchPercent[b] = totalInBatch == 0
+                    ? 0 : batchLearned[b] * 100 / totalInBatch;
+        }
+        stats.postValue(new Stats(dao.countWords(), dao.countLearned(),
+                dao.countKnown(), dao.countUnknown(), currentBatch,
+                batchPercent, batchKnown, batchLearned, batchTotal));
     }
 
     private List<Word> daoList(int batch) {
@@ -185,23 +207,24 @@ public class WordViewModel extends AndroidViewModel {
         return WordDatabase.getInstance(getApplication()).wordDao();
     }
 
+    /**
+     * 当前年级（第几批）：按"期末考试通过的最高年级 + 1"算。
+     *
+     * <p>以前看的是"已学比例 ≥ 80%"——首页把一批字划一遍就自动升年级，一次试都没考也照升。
+     * 现在改成考试说话：一年级期末考及格了才算一年级毕业、首页显示二年级；一场期末考都没过就停在一年级。
+     * 毕业考试（小升初 / 中考）不算年级。</p>
+     */
     private int currentBatch() {
-        WordDao dao = dao();
-        int cur = 1;
-        for (int b = 1; b <= 10; b++) {
-            int total = dao.countInBatch(b);
-            if (total == 0) {
-                break;
-            }
-            // 按"已学"算批次进度：首页翻到这个字就算学过，不会卡住（已识要靠考试判定）
-            int learned = dao.countLearnedInBatch(b);
-            if (learned * 100 >= total * 80) {
-                cur = b + 1;
-            } else {
-                break;
+        Context context = getApplication();
+        TestScores scores = new TestScores(context);
+        int pass = Settings.passScore(context);
+        int passed = 0;
+        for (TestCatalog.TestSpec spec : TestCatalog.ALL) {
+            if (spec.diploma == null && scores.best(spec.id) >= pass) {
+                passed = Math.max(passed, spec.toBatch);
             }
         }
-        return Math.min(cur, 10);
+        return Math.min(10, passed + 1);
     }
 
     private static boolean isDue(Word w, long now) {
