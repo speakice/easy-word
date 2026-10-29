@@ -86,8 +86,7 @@ public class ProfileFragment extends Fragment {
             if (stats == null) {
                 return;
             }
-            binding.textStats.setText("识字 " + stats.known + " · 已学 " + stats.learned
-                    + " · 未识 " + stats.unknown);
+            binding.textStatLearned.setText(stats.learned + "字");
             int percent = stats.total <= 0 ? 0 : stats.known * 100 / stats.total;
             binding.textTotalProgress.setText(stats.total + " 字学习进度：" + percent + "%");
             binding.progressLearn.setMax(Math.max(1, stats.total));
@@ -109,6 +108,9 @@ public class ProfileFragment extends Fragment {
         applyProfile();
         refreshScoresSummary();
         refreshListCounts();
+        // 已学字数、学习时长、学习天数都会随刚才的学习变化，回到这一页就重新算一次
+        viewModel.refreshStats();
+        refreshHeatmap();
     }
 
     /** 昵称和头像跟着设置走。 */
@@ -200,11 +202,33 @@ public class ProfileFragment extends Fragment {
                 return;
             }
             Map<String, Long> map = new HashMap<>();
+            long totalMillis = 0;
+            int studyDays = 0;
             for (DailyRecord r : records) {
                 map.put(r.getDate(), r.getMillis());
+                if (r.getMillis() > 0) {
+                    totalMillis += r.getMillis();
+                    studyDays++;
+                }
             }
             binding.heatmap.setData(map);
+            binding.textStatStudyTime.setText(formatDuration(totalMillis));
+            binding.textStatStudyDays.setText(studyDays + "天");
         });
+    }
+
+    /** 学习时长：不足 1 小时按分钟显示，超过按「X小时Y分」显示。 */
+    private static String formatDuration(long millis) {
+        long minutes = millis / 60_000L;
+        if (minutes <= 0) {
+            return "0分钟";
+        }
+        if (minutes < 60) {
+            return minutes + "分钟";
+        }
+        long hours = minutes / 60;
+        long rest = minutes % 60;
+        return rest == 0 ? hours + "小时" : hours + "小时" + rest + "分";
     }
 
     /** 时间切换：从安装所在的半年开始，每过半年多一个选项。 */

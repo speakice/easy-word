@@ -20,11 +20,21 @@
 
 安装时如果系统提示"未知来源"，在弹窗里允许一次即可。装好打开就能用，全程离线。
 
-<sub>也可以直接下这个版本：[EasyWord-v1.9.apk](https://github.com/speakice/easy-word/releases/download/v1.9/EasyWord-v1.9.apk)（19.2 MB）</sub>
+<sub>也可以直接下这个版本：[EasyWord-v1.10.apk](https://github.com/speakice/easy-word/releases/download/v1.10/EasyWord-v1.10.apk)（19.2 MB）</sub>
 
 ---
 
 ## 更新日志
+
+### v1.10
+
+**新增**
+
+- **「我的」页顶部卡片加了三个学习数字**：`已学字数`（字库里学过的字数）、`学习时长`（按天累计，不足 1 小时显示分钟，超过显示「X小时Y分」）、`学习天数`（有学习记录的天数，和热力图同一份数据）。每次回到「我的」页都会重新统计，不会显示旧数字
+
+**调整**
+
+- 去掉了昵称下面那行「识字 X · 未识 Y」，改由上面的大数字展示
 
 ### v1.9
 

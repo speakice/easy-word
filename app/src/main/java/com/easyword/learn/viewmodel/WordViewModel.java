@@ -178,7 +178,19 @@ public class WordViewModel extends AndroidViewModel {
         order.addAll(shuffle(due));
         order.addAll(shuffle(fresh));
         studyOrder.postValue(order);
+        publishStats(currentBatch);
+    }
 
+    /**
+     * 只重算统计（已学 / 已识 / 各批进度），不动首页的卡片顺序。
+     * 「我的」页每次回到前台都会调一次，保证数字是刚学完的最新值。
+     */
+    public void refreshStats() {
+        repository.execute(() -> publishStats(currentBatch()));
+    }
+
+    /** 统计各批进度并推给界面（调用方负责在后台线程执行）。 */
+    private void publishStats(int currentBatch) {
         WordDao dao = dao();
         // 记录每一批的学习进度（识字率），考试解锁用
         int[] batchPercent = new int[11];
