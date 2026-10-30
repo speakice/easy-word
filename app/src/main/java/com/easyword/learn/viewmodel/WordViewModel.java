@@ -117,7 +117,8 @@ public class WordViewModel extends AndroidViewModel {
     /** 首次初始化：回填 950 字库并生成学习顺序。 */
     public void init() {
         if (seeded) {
-            refreshStudyOrder();
+            // 页面重建（比如切 Tab 回来）不重新洗牌，保持原来的顺序和位置
+            refreshGradeIfNeeded();
             return;
         }
         seeded = true;

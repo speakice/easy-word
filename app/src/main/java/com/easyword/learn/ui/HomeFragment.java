@@ -16,12 +16,15 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.easyword.learn.R;
 import com.easyword.learn.adapter.WordPagerAdapter;
+import com.easyword.learn.data.TestScores;
 import com.easyword.learn.data.Word;
 import com.easyword.learn.databinding.FragmentLearnBinding;
+import com.easyword.learn.utils.Settings;
 import com.easyword.learn.utils.TTSManager;
 import com.easyword.learn.utils.VibrateUtil;
 import com.easyword.learn.viewmodel.WordViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** 识字 Tab：全屏上下滑动背字，配合描红、练写、逐行播放与记忆曲线顺序。 */
@@ -36,6 +39,12 @@ public class HomeFragment extends Fragment implements WordPagerAdapter.CardListe
     private int lastReadingPage = -1;
     private long pageShownAt;
     private int activePage;
+
+    /** 最近一次收到的字表 / 统计，用来拼「学完页」。 */
+    private List<Word> studyWords;
+    private WordViewModel.Stats lastStats;
+    /** 本次页面创建后还没恢复过上次的字。 */
+    private boolean restorePending = true;
 
     /** 从字表点某个字进来时，定位到那个字。 */
     public static final String ARG_FOCUS_CHAR = "focus_char";
@@ -60,6 +69,7 @@ public class HomeFragment extends Fragment implements WordPagerAdapter.CardListe
         binding.viewPager.setAdapter(pagerAdapter);
         binding.viewPager.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
         binding.viewPager.setOffscreenPageLimit(1);
+        bindSwipeUpToReview();
 
         binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -67,13 +77,21 @@ public class HomeFragment extends Fragment implements WordPagerAdapter.CardListe
                 recordDwellAndStudied(pageShownAt, activePage);
                 activePage = position;
                 pageShownAt = SystemClock.elapsedRealtime();
+                rememberCurrentWord(position);
                 startReadingPage(position);
                 updateBatchHeader();
             }
         });
 
-        viewModel.getStudyOrder().observe(getViewLifecycleOwner(), pagerAdapter::submitList);
-        viewModel.getStats().observe(getViewLifecycleOwner(), stats -> updateBatchHeader());
+        viewModel.getStudyOrder().observe(getViewLifecycleOwner(), words -> {
+            studyWords = words;
+            submitWords();
+        });
+        viewModel.getStats().observe(getViewLifecycleOwner(), stats -> {
+            lastStats = stats;
+            updateBatchHeader();
+            submitWords();
+        });
         viewModel.init();
 
         if (getArguments() != null) {
@@ -124,6 +142,8 @@ public class HomeFragment extends Fragment implements WordPagerAdapter.CardListe
     @Override
     public void onResume() {
         super.onResume();
+        // 从后台/别的页面回来，从现在重新计时，后台那段时间不算学习时长
+        pageShownAt = SystemClock.elapsedRealtime();
         // 刚考完试回来时，年级（考试通过的最高年级 + 1）可能变了，变了才重排卡片
         viewModel.refreshGradeIfNeeded();
         if (binding != null) {
@@ -138,6 +158,82 @@ public class HomeFragment extends Fragment implements WordPagerAdapter.CardListe
         super.onPause();
     }
 
+    /** 在「学完页」继续上滑时回到第一张，复习前面学过的字。 */
+    private void bindSwipeUpToReview() {
+        if (binding == null) {
+            return;
+        }
+        binding.swipeWatcher.setOnSwipeUpListener(() -> {
+            if (isOnGradeDonePage()) {
+                binding.viewPager.setCurrentItem(0, false);
+            }
+        });
+    }
+
+    /** 当前停的是不是「学完页」。 */
+    private boolean isOnGradeDonePage() {
+        List<Word> words = pagerAdapter.getCurrentList();
+        int position = binding.viewPager.getCurrentItem();
+        return words != null && position >= 0 && position < words.size()
+                && WordPagerAdapter.isGradeDone(words.get(position));
+    }
+
+    /** 把字表交给 Pager：当前年级还没考过期末考时，末尾多挂一个「学完啦」页。 */
+    private void submitWords() {
+        if (studyWords == null || lastStats == null) {
+            return;
+        }
+        List<Word> out = new ArrayList<>(studyWords);
+        int grade = lastStats.currentBatch;
+        if (!out.isEmpty() && !gradeExamPassed(grade)) {
+            out.add(WordPagerAdapter.gradeDoneItem(grade));
+        }
+        // 等列表真正提交完再定位，否则 Pager 里还没有这些项
+        pagerAdapter.submitList(out, this::restoreLastWord);
+    }
+
+    /** 记住当前看到的字，下次打开 App 接着它。 */
+    private void rememberCurrentWord(int position) {
+        List<Word> words = pagerAdapter.getCurrentList();
+        if (words == null || position < 0 || position >= words.size()) {
+            return;
+        }
+        Word word = words.get(position);
+        if (!WordPagerAdapter.isGradeDone(word)) {
+            Settings.setLastWord(requireContext(), word.getWord());
+        }
+    }
+
+    /** 页面重建 / 重新打开 App 后，翻回上次停下的那个字（找不到就从头开始）。 */
+    private void restoreLastWord() {
+        if (!restorePending || binding == null) {
+            return;
+        }
+        restorePending = false;
+        String last = Settings.lastWord(requireContext());
+        if (last == null) {
+            return;
+        }
+        List<Word> words = pagerAdapter.getCurrentList();
+        if (words == null) {
+            return;
+        }
+        for (int i = 0; i < words.size(); i++) {
+            if (last.equals(words.get(i).getWord())) {
+                if (binding.viewPager.getCurrentItem() != i) {
+                    binding.viewPager.setCurrentItem(i, false);
+                }
+                return;
+            }
+        }
+    }
+
+    /** 当前年级的期末考试过了没有。 */
+    private boolean gradeExamPassed(int batch) {
+        TestScores scores = new TestScores(requireContext());
+        return scores.best("unit_" + batch) >= Settings.passScore(requireContext());
+    }
+
     private void recordDwellAndStudied(long startedAt, int page) {
         if (startedAt <= 0 || page < 0) {
             return;
@@ -146,6 +242,9 @@ public class HomeFragment extends Fragment implements WordPagerAdapter.CardListe
         List<Word> words = pagerAdapter.getCurrentList();
         if (words != null && page >= 0 && page < words.size()) {
             Word word = words.get(page);
+            if (WordPagerAdapter.isGradeDone(word)) {
+                return;
+            }
             if (word.isLearned()) {
                 viewModel.recordReview(word, Math.min(millis, 300_000));
             } else {
@@ -176,6 +275,10 @@ public class HomeFragment extends Fragment implements WordPagerAdapter.CardListe
             }
         }
         Word word = words.get(position);
+        if (WordPagerAdapter.isGradeDone(word)) {
+            // 学完页不是真字，不朗读、不描红
+            return;
+        }
         WordPagerAdapter.CardViewHolder holder = (WordPagerAdapter.CardViewHolder)
                 recycler.findViewHolderForAdapterPosition(position);
         if (holder != null) {
@@ -213,4 +316,11 @@ public class HomeFragment extends Fragment implements WordPagerAdapter.CardListe
     public void onSpeak(String text) {
         tts.speak(text);
     }
+
+    @Override
+    public void onGoExam(String testId) {
+        startActivity(TestActivity.intent(requireContext(), testId));
+    }
+
+
 }

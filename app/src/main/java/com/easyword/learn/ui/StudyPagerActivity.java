@@ -162,4 +162,10 @@ public class StudyPagerActivity extends BaseActivity implements WordPagerAdapter
     public void onSpeak(String text) {
         tts.speak(text);
     }
+
+    @Override
+    public void onGoExam(String testId) {
+        // 字表学习页不挂「学完页」，用不到
+    }
+
 }

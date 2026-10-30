@@ -4,10 +4,16 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+    <com.easyword.learn.view.SwipeWatcherLayout
+        android:id="@+id/swipeWatcher"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.easyword.learn.view.SwipeWatcherLayout>
 
     <!-- 数据未就绪时的占位 -->
     <TextView

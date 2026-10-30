@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.easyword.learn.R;
 import com.easyword.learn.data.Word;
+import com.easyword.learn.databinding.ItemGradeDoneBinding;
 import com.easyword.learn.databinding.ItemWordCardBinding;
 import com.easyword.learn.utils.EmphasisText;
 import com.easyword.learn.utils.KaraokeHighlighter;
@@ -42,7 +43,7 @@ import java.util.Objects;
  * 每个卡片视图负责绑定汉字/拼音、描红笔画层、练写区、清空按钮、逐行播放按钮，
  * 并把交互（单击朗读/双击收藏/左滑收藏/右滑擦除）转发给宿主界面。</p>
  */
-public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardViewHolder> {
+public class WordPagerAdapter extends ListAdapter<Word, RecyclerView.ViewHolder> {
 
     /** 卡片交互事件回调，由宿主界面（首页 / 列表学习页）实现。 */
     public interface CardListener {
@@ -60,6 +61,11 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
 
         /** 播放按钮：朗读一段文本（字 / 词组 / 顺口溜 / 场景）。 */
         void onSpeak(String text);
+
+        /** 「本年级学完」页点“去考试”（只有首页有这个页）。 */
+        default void onGoExam(String testId) {
+        }
+
     }
 
     private final CardListener cardListener;
@@ -67,6 +73,26 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
 
     /** 朗读时的跟读高亮色：跟描红笔迹同一个红（= {@code R.color.stroke_red}）。 */
     private static final int READ_HIGHLIGHT = 0xFFFF3B30;
+
+    /** 「本年级学完」页占位项的 id：不是真字，只为了让 Pager 多一页。 */
+    public static final int GRADE_DONE_ID = Integer.MIN_VALUE;
+
+    private static final int VIEW_WORD = 0;
+    private static final int VIEW_GRADE_DONE = 1;
+
+    /** 造一个「XX学完啦」页：word 存标题，batch 存年级（考试 id = unit_batch）。 */
+    public static Word gradeDoneItem(int batch) {
+        Word w = new Word();
+        w.setId(GRADE_DONE_ID);
+        w.setWord(com.easyword.learn.data.TestCatalog.batchName(batch) + "学完啦");
+        w.setBatch(batch);
+        return w;
+    }
+
+    /** 判断某一项是不是「学完页」占位项。 */
+    public static boolean isGradeDone(Word word) {
+        return word != null && word.getId() == GRADE_DONE_ID;
+    }
 
     // ---- 自动朗读（歌词跟随）状态 ----
     private static final int TYPE_CHAR = 0;
@@ -355,9 +381,18 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
                 : EmphasisText.mark(plain, readingWord.getWord()));
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return isGradeDone(getItem(position)) ? VIEW_GRADE_DONE : VIEW_WORD;
+    }
+
     @NonNull
     @Override
-    public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == VIEW_GRADE_DONE) {
+            return new GradeDoneViewHolder(ItemGradeDoneBinding.inflate(
+                    LayoutInflater.from(parent.getContext()), parent, false));
+        }
         ItemWordCardBinding binding =
                 ItemWordCardBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         CardViewHolder holder = new CardViewHolder(binding);
@@ -410,8 +445,13 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder vh, int position) {
         Word word = getItem(position);
+        if (isGradeDone(word)) {
+            bindGradeDone((GradeDoneViewHolder) vh, word);
+            return;
+        }
+        CardViewHolder holder = (CardViewHolder) vh;
         holder.binding.textWord.setText(word.getWord());
         holder.binding.textWord.setTextColor(Color.WHITE);
         holder.binding.strokeView.bindWord(holder.binding.textWord, word.getWord());
@@ -571,6 +611,23 @@ public class WordPagerAdapter extends ListAdapter<Word, WordPagerAdapter.CardVie
                 handler.post(karaoke::stop);
             }
         });
+    }
+
+    /** 「学完页」：点按钮去考试；继续上滑回去复习。 */
+    private void bindGradeDone(GradeDoneViewHolder holder, Word item) {
+        holder.binding.textGradeDoneTitle.setText(item.getWord());
+        final String examId = "unit_" + item.getBatch();
+        holder.binding.btnGoExam.setOnClickListener(v -> cardListener.onGoExam(examId));
+    }
+
+    /** 「学完页」的 ViewHolder。 */
+    static class GradeDoneViewHolder extends RecyclerView.ViewHolder {
+        final ItemGradeDoneBinding binding;
+
+        GradeDoneViewHolder(@NonNull ItemGradeDoneBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
     }
 
     /** Item ViewHolder。 */

@@ -16,6 +16,7 @@ public final class Settings {
     private static final String KEY_PASS = "pass_score";
     private static final String KEY_GOOD = "good_score";
     private static final String KEY_EXCELLENT = "excellent_score";
+    private static final String KEY_LAST_WORD = "last_word";
 
     public static final String DEFAULT_NICKNAME = "我的学习";
     public static final int DEFAULT_UNLOCK = 80;
@@ -28,6 +29,21 @@ public final class Settings {
 
     private static SharedPreferences prefs(Context context) {
         return context.getApplicationContext().getSharedPreferences(FILE, Context.MODE_PRIVATE);
+    }
+
+    // ---------- 上次学到的字 ----------
+
+    /** 上次停在的那个字（首页下次打开时接着它）。没学过返回 null。 */
+    public static String lastWord(Context context) {
+        String value = prefs(context).getString(KEY_LAST_WORD, null);
+        return value == null || value.isEmpty() ? null : value;
+    }
+
+    public static void setLastWord(Context context, String word) {
+        if (word == null || word.isEmpty()) {
+            return;
+        }
+        prefs(context).edit().putString(KEY_LAST_WORD, word).apply();
     }
 
     // ---------- 昵称 / 头像 ----------
